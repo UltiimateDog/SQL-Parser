@@ -41,4 +41,9 @@ public class BlazeDBTest {
 			System.err.println("Table file not found.");
 		}
 	}
+
+	@Test
+	public void Select_test1() {
+
+	}
 }
