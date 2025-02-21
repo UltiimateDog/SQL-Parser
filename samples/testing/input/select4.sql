@@ -1,0 +1,1 @@
+SELECT * FROM Enrolled WHERE Enrolled.A = 1 AND Enrolled.H < 90;
