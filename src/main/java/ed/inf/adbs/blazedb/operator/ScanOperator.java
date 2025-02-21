@@ -11,8 +11,8 @@ public class ScanOperator extends Operator {
     private BufferedReader reader;
     private final File tableFile;
 
-    public ScanOperator(String tableName, String databaseDir) throws FileNotFoundException {
-        DatabaseCatalog catalog = DatabaseCatalog.getInstance(databaseDir);
+    public ScanOperator(String tableName) throws FileNotFoundException {
+        DatabaseCatalog catalog = DatabaseCatalog.getInstance();
         this.tableFile = catalog.getTableFile(tableName);
         openFile();
     }
