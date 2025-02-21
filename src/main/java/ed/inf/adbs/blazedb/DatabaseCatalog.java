@@ -13,7 +13,7 @@ import java.util.*;
 public class DatabaseCatalog {
     @Getter
     private static DatabaseCatalog instance = null;
-    private String databaseDir;
+    private final String databaseDir;
     private final Map<String, List<String>> tableSchemas; // TableName -> Column Names
     private final Map<String, File> tableFiles; // TableName -> File object
 
