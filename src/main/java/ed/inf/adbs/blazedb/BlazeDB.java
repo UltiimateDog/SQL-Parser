@@ -53,7 +53,7 @@ public class BlazeDB {
 			// Iterate over the tuples produced by root
 			Tuple tuple = root.getNextTuple();
 			while (tuple != null) {
-				writer.write(tuple.toString());
+				writer.write(tuple.toCSV());
 				writer.newLine();
 				tuple = root.getNextTuple();
 			}
