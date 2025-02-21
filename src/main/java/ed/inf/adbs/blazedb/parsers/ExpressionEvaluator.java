@@ -87,7 +87,7 @@ public class ExpressionEvaluator {
                 throw new IllegalArgumentException("Column not found in schema: " + columnName);
             }
 
-            return Integer.parseInt(tuple.getValue(columnIndex));
+            return Integer.parseInt(tuple.getValue(columnIndex).replaceAll("\\s", ""));
         }
         throw new IllegalArgumentException("Unsupported expression: " + expression);
     }
