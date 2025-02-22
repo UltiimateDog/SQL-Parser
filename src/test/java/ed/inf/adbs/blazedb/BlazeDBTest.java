@@ -3,10 +3,7 @@ package ed.inf.adbs.blazedb;
 import static ed.inf.adbs.blazedb.Helper.CSV_Equals;
 import static org.junit.Assert.assertTrue;
 
-import ed.inf.adbs.blazedb.operator.Operator;
-import ed.inf.adbs.blazedb.operator.ProjectOperator;
-import ed.inf.adbs.blazedb.operator.ScanOperator;
-import ed.inf.adbs.blazedb.operator.SelectOperator;
+import ed.inf.adbs.blazedb.operator.*;
 import ed.inf.adbs.blazedb.parsers.Parser;
 import org.junit.Test;
 
@@ -112,6 +109,38 @@ public class BlazeDBTest {
 
 			assertTrue(CSV_Equals(outputFile, expFile));
 		}
+	}
+
+	@Test
+	public void Join_test1() throws IOException {
+			String name = "join1";
+			String outputFile = OUTPUT_DIR + File.separator + name + ".csv";
+			String expFile = EXP_DIR + File.separator + name + ".csv";
+			String inputFile = INPUT_DIR + File.separator + name + ".sql";
+
+			Parser parser = new Parser(inputFile);
+			Operator scanOperator = new ScanOperator(parser.getFromTable().toString());
+			Operator scanOperator2 = new ScanOperator(parser.getTableNames().get(1));
+			Operator joinOperator = new JoinOperator(scanOperator, scanOperator2, parser.getWhereClause(), catalog.getTableSchemas());
+			BlazeDB.execute(joinOperator, outputFile);
+
+			assertTrue(CSV_Equals(outputFile, expFile));
+	}
+
+	@Test
+	public void Join_test2() throws IOException {
+		String name = "join2";
+		String outputFile = OUTPUT_DIR + File.separator + name + ".csv";
+		String expFile = EXP_DIR + File.separator + name + ".csv";
+		String inputFile = INPUT_DIR + File.separator + name + ".sql";
+
+		Parser parser = new Parser(inputFile);
+		Operator scanOperator = new ScanOperator(parser.getFromTable().toString());
+		Operator scanOperator2 = new ScanOperator(parser.getTableNames().get(1));
+		Operator joinOperator = new JoinOperator(scanOperator, scanOperator2, parser.getWhereClause(), catalog.getTableSchemas());
+		BlazeDB.execute(joinOperator, outputFile);
+
+		assertTrue(CSV_Equals(outputFile, expFile));
 	}
 
 }
