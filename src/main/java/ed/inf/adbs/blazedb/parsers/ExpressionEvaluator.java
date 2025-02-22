@@ -73,7 +73,7 @@ public class ExpressionEvaluator {
             return (int) ((LongValue) expression).getValue();
         } else if (expression instanceof Column) {
             Column column = (Column) expression;
-            String columnName = column.getColumnName(); // tableName.column
+            String columnName = column.getColumnName();
             String tableName = column.getTable().getName();
 
             if (!tableSchemas.containsKey(tableName)) {
@@ -87,7 +87,7 @@ public class ExpressionEvaluator {
                 throw new IllegalArgumentException("Column not found in schema: " + columnName);
             }
 
-            return Integer.parseInt(tuple.getValue(columnIndex).replaceAll("\\s", ""));
+            return Integer.parseInt(tuple.getValue(columnIndex).replaceAll("\\s",""));
         }
         throw new IllegalArgumentException("Unsupported expression: " + expression);
     }

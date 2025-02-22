@@ -17,9 +17,6 @@ public class DatabaseCatalog {
     private final Map<String, List<String>> tableSchemas; // TableName -> Column Names
     private final Map<String, File> tableFiles; // TableName -> File object
 
-    /**
-     * Private constructor to enforce singleton pattern.
-     */
     private DatabaseCatalog(String databaseDir) {
         this.databaseDir = databaseDir;
         this.tableSchemas = new HashMap<>();
@@ -27,11 +24,6 @@ public class DatabaseCatalog {
         loadSchema();
     }
 
-    /**
-     * Returns the singleton instance of the catalog.
-     * @param databaseDir The database directory path.
-     * @return The singleton instance of DatabaseCatalog.
-     */
     public static DatabaseCatalog getInstance(String databaseDir) {
         if (instance == null) {
             instance = new DatabaseCatalog(databaseDir);
@@ -43,7 +35,7 @@ public class DatabaseCatalog {
      * Loads the schema.txt file to initialize table metadata.
      */
     private void loadSchema() {
-        File schemaFile = new File(databaseDir + "/schema.txt");
+        File schemaFile = new File(databaseDir + File.separator + "schema.txt");
 
         try (BufferedReader reader = new BufferedReader(new FileReader(schemaFile))) {
             String line;
@@ -53,7 +45,7 @@ public class DatabaseCatalog {
                 List<String> columns = Arrays.asList(Arrays.copyOfRange(parts, 1, parts.length));
 
                 tableSchemas.put(tableName, columns);
-                tableFiles.put(tableName, new File(databaseDir + "/data/" + tableName + ".csv"));
+                tableFiles.put(tableName, new File(databaseDir + File.separator + "data" + File.separator + tableName + ".csv"));
             }
         } catch (IOException e) {
             throw new RuntimeException("Error loading schema.txt", e);
@@ -76,5 +68,18 @@ public class DatabaseCatalog {
      */
     public List<String> getTableSchema(String tableName) {
         return tableSchemas.get(tableName);
+    }
+
+    /**
+     * Prints the metadata of the database catalog.
+     */
+    public void printCatalog(Boolean showFilePath) {
+        System.out.println("Database Directory: " + databaseDir);
+        System.out.println("Tables:");
+        for (String tableName : tableSchemas.keySet()) {
+            System.out.println("- Table Name: " + tableName);
+            System.out.println("  Columns:\t  " + String.join(", ", tableSchemas.get(tableName)));
+            if (showFilePath) System.out.println("  File Path: " + tableFiles.get(tableName).getAbsolutePath());
+        }
     }
 }

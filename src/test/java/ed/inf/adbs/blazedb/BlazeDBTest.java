@@ -4,6 +4,7 @@ import static ed.inf.adbs.blazedb.Helper.CSV_Equals;
 import static org.junit.Assert.assertTrue;
 
 import ed.inf.adbs.blazedb.operator.Operator;
+import ed.inf.adbs.blazedb.operator.ProjectOperator;
 import ed.inf.adbs.blazedb.operator.ScanOperator;
 import ed.inf.adbs.blazedb.operator.SelectOperator;
 import ed.inf.adbs.blazedb.parsers.Parser;
@@ -73,4 +74,44 @@ public class BlazeDBTest {
 			assertTrue(CSV_Equals(outputFile, expFile));
 		}
 	}
+
+	@Test
+	public void Project_test1() throws IOException {
+		for (int i = 0; i < 3; i++) {
+			String name = "project" + (i+1);
+			String outputFile = OUTPUT_DIR + File.separator + name + ".csv";
+			String expFile = EXP_DIR + File.separator + name + ".csv";
+			String inputFile = INPUT_DIR + File.separator + name + ".sql";
+
+			Parser parser = new Parser(inputFile);
+			Operator scanOperator = new ScanOperator(parser.getFromTable().toString());
+			Operator projectOperator = new ProjectOperator(scanOperator, parser.getSelectItems());
+			BlazeDB.execute(projectOperator, outputFile);
+
+			assertTrue(CSV_Equals(outputFile, expFile));
+		}
+	}
+
+	@Test
+	public void Project_test2() throws IOException {
+		for (int i = 0; i < 3; i++) {
+			String name = "project" + (i+1);
+			String nameO = "project" + (i+4);
+			String name2 = "select" + (i+1);
+			String outputFile = OUTPUT_DIR + File.separator + nameO + ".csv";
+			String expFile = EXP_DIR + File.separator + nameO + ".csv";
+			String inputFile = INPUT_DIR + File.separator + name + ".sql";
+			String inputFile2 = INPUT_DIR + File.separator + name2 + ".sql";
+
+			Parser parser = new Parser(inputFile);
+			Parser parser2 = new Parser(inputFile2);
+			Operator scanOperator = new ScanOperator(parser.getFromTable().toString());
+			Operator selectOperator = new SelectOperator(scanOperator, parser2.getWhereClause());
+			Operator projectOperator = new ProjectOperator(selectOperator, parser.getSelectItems());
+			BlazeDB.execute(projectOperator, outputFile);
+
+			assertTrue(CSV_Equals(outputFile, expFile));
+		}
+	}
+
 }
