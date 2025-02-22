@@ -20,6 +20,7 @@ public class ExpressionEvaluator {
 
     private final List<String> tableOrder; // TableName -> Column Names
     private final Tuple tuple; // The tuple being evaluated
+    private Boolean ignoreFlag;
 
     public ExpressionEvaluator(List<String> tableOrder, Tuple tuple) {
         this.tableOrder = tableOrder;
@@ -55,8 +56,11 @@ public class ExpressionEvaluator {
      * Evaluates a binary comparison expression.
      */
     private boolean evaluateComparison(BinaryExpression expression, String operator) {
+        ignoreFlag = false;
         int leftValue = extractValue(expression.getLeftExpression());
         int rightValue = extractValue(expression.getRightExpression());
+
+        if (ignoreFlag) return true;
 
         return switch (operator) {
             case "=" -> leftValue == rightValue;
@@ -77,6 +81,11 @@ public class ExpressionEvaluator {
             return (int) ((LongValue) expression).getValue();
         } else if (expression instanceof Column) {
             int columnIndex = getIndices(expression, tableOrder).get(0);
+
+            if (columnIndex >= tuple.getValues().size()) {
+                ignoreFlag = true;
+                return 0;
+            }
 
             return Integer.parseInt(tuple.getValue(columnIndex).replaceAll("\\s",""));
         }

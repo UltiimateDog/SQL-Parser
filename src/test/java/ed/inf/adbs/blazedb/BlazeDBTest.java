@@ -179,14 +179,37 @@ public class BlazeDBTest {
 		List<String> tableOrder = Arrays.asList("Student", "Enrolled", "Course");
 		List<String> tableOrder2 = Arrays.asList("Course", "Enrolled", "Student");
 
+		/*
 		System.out.println(getComparedTables(tup1, tableOrder));
 		System.out.println(getComparedTables(tup2, tableOrder2));
 		System.out.println(getComparedTables(tup3, tableOrder));
 		System.out.println(getComparedTables(tup4, tableOrder2));
 		System.out.println(getComparedTables(tup5, tableOrder));
 		System.out.println(getComparedTables(tup5, tableOrder2));
+		*/
 
 		assertTrue(true);
+	}
+
+	@Test
+	public void Join_test4() throws IOException {
+		for (int i = 0; i < 3; i++) {
+			String name = "join" + (i+8);
+			String outputFile = OUTPUT_DIR + File.separator + name + ".csv";
+			String expFile = EXP_DIR + File.separator + name + ".csv";
+			String inputFile = INPUT_DIR + File.separator + name + ".sql";
+
+			Parser parser = new Parser(inputFile);
+			Operator scanOperator = new ScanOperator(parser.getTableOrder().get(0));
+			Operator scanOperator2 = new ScanOperator(parser.getTableOrder().get(1));
+			Operator scanOperator3 = new ScanOperator(parser.getTableOrder().get(2));
+			Operator joinOperator = new JoinOperator(scanOperator, scanOperator2, parser.getWhereClause(), parser.getTableOrder());
+			Operator joinOperator2 = new JoinOperator(joinOperator, scanOperator3, parser.getWhereClause(), parser.getTableOrder());
+			Operator projectOperator = new ProjectOperator(joinOperator2, parser.getSelectItems(), parser.getTableOrder());
+			BlazeDB.execute(projectOperator, outputFile);
+
+			assertTrue(CSV_Equals(outputFile, expFile));
+		}
 	}
 
 }
