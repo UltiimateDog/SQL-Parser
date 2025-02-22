@@ -113,7 +113,8 @@ public class BlazeDBTest {
 
 	@Test
 	public void Join_test1() throws IOException {
-			String name = "join1";
+		for (int i = 0; i < 3; i++) {
+			String name = "join" + (i+1);
 			String outputFile = OUTPUT_DIR + File.separator + name + ".csv";
 			String expFile = EXP_DIR + File.separator + name + ".csv";
 			String inputFile = INPUT_DIR + File.separator + name + ".sql";
@@ -125,24 +126,25 @@ public class BlazeDBTest {
 			BlazeDB.execute(joinOperator, outputFile);
 
 			assertTrue(CSV_Equals(outputFile, expFile));
+		}
 	}
 
 	@Test
 	public void Join_test2() throws IOException {
-		String name = "join2";
-		String outputFile = OUTPUT_DIR + File.separator + name + ".csv";
-		String expFile = EXP_DIR + File.separator + name + ".csv";
-		String inputFile = INPUT_DIR + File.separator + name + ".sql";
+		for (int i = 0; i < 2; i++) {
+			String name = "join" + (i+4);
+			String outputFile = OUTPUT_DIR + File.separator + name + ".csv";
+			String expFile = EXP_DIR + File.separator + name + ".csv";
+			String inputFile = INPUT_DIR + File.separator + name + ".sql";
 
-		Parser parser = new Parser(inputFile);
-		Operator scanOperator = new ScanOperator(parser.getFromTable().toString());
-		Operator scanOperator2 = new ScanOperator(parser.getTableNames().get(1));
-		Operator joinOperator = new JoinOperator(scanOperator, scanOperator2, parser.getWhereClause(), parser.getTableNames());
-		BlazeDB.execute(joinOperator, outputFile);
+			Parser parser = new Parser(inputFile);
+			Operator scanOperator = new ScanOperator(parser.getFromTable().toString());
+			Operator scanOperator2 = new ScanOperator(parser.getTableNames().get(1));
+			Operator joinOperator = new JoinOperator(scanOperator, scanOperator2, parser.getWhereClause(), parser.getTableNames());
+			BlazeDB.execute(joinOperator, outputFile);
 
-		assertTrue(CSV_Equals(outputFile, expFile));
+			assertTrue(CSV_Equals(outputFile, expFile));
+		}
 	}
-
-
 
 }
