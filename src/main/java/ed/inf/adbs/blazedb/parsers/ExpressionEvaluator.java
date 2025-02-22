@@ -1,11 +1,13 @@
 package ed.inf.adbs.blazedb.parsers;
 
+import ed.inf.adbs.blazedb.DatabaseCatalog;
 import ed.inf.adbs.blazedb.Tuple;
 import net.sf.jsqlparser.expression.*;
 import net.sf.jsqlparser.expression.operators.conditional.AndExpression;
 import net.sf.jsqlparser.expression.operators.relational.*;
 import net.sf.jsqlparser.schema.Column;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -14,12 +16,15 @@ import java.util.Map;
  */
 public class ExpressionEvaluator {
 
-    private final Map<String, List<String>> tableSchemas; // TableName -> Column Names
+    private final List<String> tableOrder; // TableName -> Column Names
+    private final Map<String, List<String>> tableSchemas;
     private final Tuple tuple; // The tuple being evaluated
 
-    public ExpressionEvaluator(Map<String, List<String>> tableSchemas, Tuple tuple) {
-        this.tableSchemas = tableSchemas;
+    public ExpressionEvaluator(List<String> tableOrder, Tuple tuple) {
+        this.tableOrder = tableOrder;
         this.tuple = tuple;
+        tableSchemas = DatabaseCatalog.getInstance().getTableSchemas(tableOrder);
+        System.out.println(tableOrder);
     }
 
     /**

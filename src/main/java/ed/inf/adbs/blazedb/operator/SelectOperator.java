@@ -14,19 +14,19 @@ import java.util.Map;
 public class SelectOperator extends Operator {
     private final Operator childOperator;
     private final Expression whereClause;
-    private final Map<String, List<String>> tableSchemas;
+    private final List<String> tableOrder;
 
-    public SelectOperator(Operator childOperator, Expression whereClause) {
+    public SelectOperator(Operator childOperator, Expression whereClause, List<String> tableOrder) {
         this.childOperator = childOperator;
         this.whereClause = whereClause;
-        this.tableSchemas = DatabaseCatalog.getInstance().getTableSchemas();
+        this.tableOrder = tableOrder;
     }
 
     @Override
     public Tuple getNextTuple() {
         Tuple tuple;
         while ((tuple = childOperator.getNextTuple()) != null) {
-            ExpressionEvaluator evaluator = new ExpressionEvaluator(tableSchemas, tuple);
+            ExpressionEvaluator evaluator = new ExpressionEvaluator(tableOrder, tuple);
             if (whereClause == null || evaluator.evaluate(whereClause)) {
                 return tuple;
             }

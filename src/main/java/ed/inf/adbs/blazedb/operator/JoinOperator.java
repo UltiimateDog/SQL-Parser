@@ -15,14 +15,17 @@ public class JoinOperator extends Operator {
     private final Operator leftChild;
     private final Operator rightChild;
     private final Expression joinCondition;
-    private final Map<String, List<String>> tableSchemas;
+    private final List<String> tableOrder;
     private Tuple leftTuple;
 
-    public JoinOperator(Operator leftChild, Operator rightChild, Expression joinCondition, Map<String, List<String>> tableSchemas) {
+    public JoinOperator(Operator leftChild,
+                        Operator rightChild,
+                        Expression joinCondition,
+                        List<String> tableOrder) {
         this.leftChild = leftChild;
         this.rightChild = rightChild;
         this.joinCondition = joinCondition;
-        this.tableSchemas = tableSchemas;  // Receive schema map as a parameter
+        this.tableOrder = tableOrder;
         this.leftTuple = leftChild.getNextTuple();  // Start with first left tuple
     }
 
@@ -38,7 +41,7 @@ public class JoinOperator extends Operator {
                 Tuple joinedTuple = new Tuple(combinedValues.toArray(new String[0]));
 
                 // Use ExpressionEvaluator with provided schema map
-                if (joinCondition == null || new ExpressionEvaluator(tableSchemas, joinedTuple).evaluate(joinCondition)) {
+                if (joinCondition == null || new ExpressionEvaluator(tableOrder, joinedTuple).evaluate(joinCondition)) {
                     return joinedTuple;
                 }
             }
