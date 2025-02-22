@@ -11,6 +11,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static ed.inf.adbs.blazedb.Helper.getIndices;
+
 /**
  * Evaluates WHERE clause conditions on a given Tuple.
  */
@@ -76,24 +78,7 @@ public class ExpressionEvaluator {
         if (expression instanceof LongValue) {
             return (int) ((LongValue) expression).getValue();
         } else if (expression instanceof Column) {
-            Column column = (Column) expression;
-            String columnName = column.getColumnName();
-            String tableName = column.getTable().getName();
-
-            if (!tableSchemas.containsKey(tableName)) {
-                throw new IllegalArgumentException("Table not found in schema: " + tableName);
-            }
-
-            List<String> schema = tableSchemas.get(tableName);
-            int columnIndex = schema.indexOf(columnName);
-
-            if (columnIndex == -1) {
-                throw new IllegalArgumentException("Column not found in schema: " + columnName);
-            }
-
-            for (int i = 0; i < tableOrder.indexOf(tableName); i++) {
-                columnIndex += tableSchemas.get(tableOrder.get(i)).size();
-            }
+            int columnIndex = getIndices(expression, tableOrder).get(0);
 
             return Integer.parseInt(tuple.getValue(columnIndex).replaceAll("\\s",""));
         }

@@ -82,7 +82,7 @@ public class BlazeDBTest {
 
 			Parser parser = new Parser(inputFile);
 			Operator scanOperator = new ScanOperator(parser.getFromTable().toString());
-			Operator projectOperator = new ProjectOperator(scanOperator, parser.getSelectItems());
+			Operator projectOperator = new ProjectOperator(scanOperator, parser.getSelectItems(), parser.getTableNames());
 			BlazeDB.execute(projectOperator, outputFile);
 
 			assertTrue(CSV_Equals(outputFile, expFile));
@@ -104,7 +104,7 @@ public class BlazeDBTest {
 			Parser parser2 = new Parser(inputFile2);
 			Operator scanOperator = new ScanOperator(parser.getFromTable().toString());
 			Operator selectOperator = new SelectOperator(scanOperator, parser2.getWhereClause(), parser2.getTableNames());
-			Operator projectOperator = new ProjectOperator(selectOperator, parser.getSelectItems());
+			Operator projectOperator = new ProjectOperator(selectOperator, parser.getSelectItems(), parser.getTableNames());
 			BlazeDB.execute(projectOperator, outputFile);
 
 			assertTrue(CSV_Equals(outputFile, expFile));

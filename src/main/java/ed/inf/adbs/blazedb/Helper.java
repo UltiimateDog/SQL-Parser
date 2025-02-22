@@ -1,4 +1,7 @@
 package ed.inf.adbs.blazedb;
+import net.sf.jsqlparser.expression.Expression;
+import net.sf.jsqlparser.schema.Column;
+
 import java.io.*;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -35,5 +38,45 @@ public class Helper {
         return true;
     }
 
+    public static List<Integer> getIndices(Expression expression, List<String> tableOrder) {
+        List<Integer> indices = new ArrayList<>();
+        String expressionStr = expression.toString();
+
+        // Extract table and column name from the expression
+        String[] parts = expressionStr.split("\\.");
+        if (parts.length != 2) {
+            throw new IllegalArgumentException("Invalid column expression: " + expressionStr);
+        }
+
+        String tableName = parts[0];
+        String columnName = parts[1];
+        Map<String, List<String>> tableSchemas = DatabaseCatalog.getInstance().getTableSchemas(tableOrder);
+
+        if (!tableSchemas.containsKey(tableName)) {
+            throw new IllegalArgumentException("Table not found in schema: " + tableName);
+        }
+
+        List<String> schema = tableSchemas.get(tableName);
+
+        // Calculate offset once
+        int offset = 0;
+        for (int i = 0; i < tableOrder.indexOf(tableName); i++) {
+            offset += tableSchemas.get(tableOrder.get(i)).size();
+        }
+
+        if (columnName.equals("*")) {
+            for (int i = 0; i < schema.size(); i++) {
+                indices.add(offset + i);
+            }
+        } else {
+            int columnIndex = schema.indexOf(columnName);
+            if (columnIndex == -1) {
+                throw new IllegalArgumentException("Column not found in schema: " + columnName);
+            }
+            indices.add(offset + columnIndex);
+        }
+
+        return indices;
+    }
 }
 
