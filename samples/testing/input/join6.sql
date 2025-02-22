@@ -1,0 +1,1 @@
+SELECT Student.B, Student.A, Enrolled.H FROM Student, Enrolled WHERE Student.A = Enrolled.A AND Student.B > 100;

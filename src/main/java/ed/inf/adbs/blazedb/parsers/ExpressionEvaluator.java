@@ -19,13 +19,11 @@ import static ed.inf.adbs.blazedb.Helper.getIndices;
 public class ExpressionEvaluator {
 
     private final List<String> tableOrder; // TableName -> Column Names
-    private final Map<String, List<String>> tableSchemas;
     private final Tuple tuple; // The tuple being evaluated
 
     public ExpressionEvaluator(List<String> tableOrder, Tuple tuple) {
         this.tableOrder = tableOrder;
         this.tuple = tuple;
-        tableSchemas = DatabaseCatalog.getInstance().getTableSchemas(tableOrder);
     }
 
     /**

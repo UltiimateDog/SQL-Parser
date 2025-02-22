@@ -147,4 +147,23 @@ public class BlazeDBTest {
 		}
 	}
 
+	@Test
+	public void Join_test3() throws IOException {
+		for (int i = 0; i < 2; i++) {
+			String name = "join" + (i+6);
+			String outputFile = OUTPUT_DIR + File.separator + name + ".csv";
+			String expFile = EXP_DIR + File.separator + name + ".csv";
+			String inputFile = INPUT_DIR + File.separator + name + ".sql";
+
+			Parser parser = new Parser(inputFile);
+			Operator scanOperator = new ScanOperator(parser.getFromTable().toString());
+			Operator scanOperator2 = new ScanOperator(parser.getTableNames().get(1));
+			Operator joinOperator = new JoinOperator(scanOperator, scanOperator2, parser.getWhereClause(), parser.getTableNames());
+			Operator projectOperator = new ProjectOperator(joinOperator, parser.getSelectItems(), parser.getTableNames());
+			BlazeDB.execute(projectOperator, outputFile);
+
+			assertTrue(CSV_Equals(outputFile, expFile));
+		}
+	}
+
 }
