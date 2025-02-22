@@ -78,5 +78,25 @@ public class Helper {
 
         return indices;
     }
+
+    public static List<String> getComparedTables(Tuple tuple, List<String> tableOrder) {
+        List<String> comparedTables = new ArrayList<>();
+        Map<String, List<String>> tableSchemas = DatabaseCatalog.getInstance().getTableSchemas(tableOrder);
+        int tupleSize = tuple.getValues().size();
+        int accumulatedSize = 0;
+
+        for (String table : tableOrder) {
+            int tableSize = tableSchemas.get(table).size();
+            accumulatedSize += tableSize;
+
+            if (tupleSize <= accumulatedSize) {
+                comparedTables.add(table);
+                break;
+            }
+            comparedTables.add(table);
+        }
+
+        return comparedTables;
+    }
 }
 
