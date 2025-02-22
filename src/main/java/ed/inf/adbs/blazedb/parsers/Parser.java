@@ -19,7 +19,7 @@ public class Parser {
     private Expression whereClause;
     private List<OrderByElement> orderByElements;
     private List<Expression> groupByExpressions;
-    private List<String> tableNames;
+    private List<String> tableOrder;
     private Boolean isDistinct;
 
     public Parser(String filename) {
@@ -50,13 +50,13 @@ public class Parser {
      * Extracts table names from the FROM clause and JOIN clauses.
      */
     private void extractTableNames() {
-        tableNames = new ArrayList<>();
+        tableOrder = new ArrayList<>();
         if (fromTable != null) {
-            tableNames.add(fromTable.toString());  // Add main table
+            tableOrder.add(fromTable.toString());  // Add main table
         }
         if (joins != null) {
             for (Join join : joins) {
-                tableNames.add(join.getRightItem().toString());  // Add joined tables
+                tableOrder.add(join.getRightItem().toString());  // Add joined tables
             }
         }
     }
@@ -66,7 +66,7 @@ public class Parser {
         System.out.println("Parsed SQL Statement: " + parsedSQL + "\n");
         System.out.println("SELECT:\t\t " + selectItems);
         System.out.println("DISTINCT:\t " + (isDistinct ? "true" : ""));
-        System.out.println("FROM:\t\t " + tableNames);
+        System.out.println("FROM:\t\t " + tableOrder);
         System.out.println("WHERE:\t\t " + (whereClause != null ? whereClause : "") );
         System.out.println("ORDER BY:\t " + (orderByElements != null ? orderByElements : ""));
         System.out.println("GROUP BY:\t " + (groupByExpressions != null ? groupByExpressions : ""));

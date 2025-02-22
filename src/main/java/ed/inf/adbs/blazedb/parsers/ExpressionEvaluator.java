@@ -1,24 +1,29 @@
 package ed.inf.adbs.blazedb.parsers;
 
+import ed.inf.adbs.blazedb.DatabaseCatalog;
 import ed.inf.adbs.blazedb.Tuple;
 import net.sf.jsqlparser.expression.*;
 import net.sf.jsqlparser.expression.operators.conditional.AndExpression;
 import net.sf.jsqlparser.expression.operators.relational.*;
 import net.sf.jsqlparser.schema.Column;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static ed.inf.adbs.blazedb.Helper.getIndices;
 
 /**
  * Evaluates WHERE clause conditions on a given Tuple.
  */
 public class ExpressionEvaluator {
 
-    private final Map<String, List<String>> tableSchemas; // TableName -> Column Names
+    private final List<String> tableOrder; // TableName -> Column Names
     private final Tuple tuple; // The tuple being evaluated
+    private Boolean ignoreFlag;
 
-    public ExpressionEvaluator(Map<String, List<String>> tableSchemas, Tuple tuple) {
-        this.tableSchemas = tableSchemas;
+    public ExpressionEvaluator(List<String> tableOrder, Tuple tuple) {
+        this.tableOrder = tableOrder;
         this.tuple = tuple;
     }
 
@@ -51,8 +56,11 @@ public class ExpressionEvaluator {
      * Evaluates a binary comparison expression.
      */
     private boolean evaluateComparison(BinaryExpression expression, String operator) {
+        ignoreFlag = false;
         int leftValue = extractValue(expression.getLeftExpression());
         int rightValue = extractValue(expression.getRightExpression());
+
+        if (ignoreFlag) return true;
 
         return switch (operator) {
             case "=" -> leftValue == rightValue;
@@ -72,19 +80,11 @@ public class ExpressionEvaluator {
         if (expression instanceof LongValue) {
             return (int) ((LongValue) expression).getValue();
         } else if (expression instanceof Column) {
-            Column column = (Column) expression;
-            String columnName = column.getColumnName();
-            String tableName = column.getTable().getName();
+            int columnIndex = getIndices(expression, tableOrder).get(0);
 
-            if (!tableSchemas.containsKey(tableName)) {
-                throw new IllegalArgumentException("Table not found in schema: " + tableName);
-            }
-
-            List<String> schema = tableSchemas.get(tableName);
-            int columnIndex = schema.indexOf(columnName);
-
-            if (columnIndex == -1) {
-                throw new IllegalArgumentException("Column not found in schema: " + columnName);
+            if (columnIndex >= tuple.getValues().size()) {
+                ignoreFlag = true;
+                return 0;
             }
 
             return Integer.parseInt(tuple.getValue(columnIndex).replaceAll("\\s",""));

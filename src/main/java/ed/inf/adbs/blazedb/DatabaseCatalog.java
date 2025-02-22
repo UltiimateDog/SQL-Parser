@@ -70,6 +70,18 @@ public class DatabaseCatalog {
         return tableSchemas.get(tableName);
     }
 
+    public Map<String, List<String>> getTableSchemas(List<String> tableNames) {
+        Map<String, List<String>> result = new HashMap<>();
+        for (String tableName : tableNames) {
+            if (tableSchemas.containsKey(tableName)) {
+                result.put(tableName, tableSchemas.get(tableName));
+            } else {
+                result.put(tableName, Collections.emptyList()); // Or handle missing tables differently
+            }
+        }
+        return result;
+    }
+
     /**
      * Prints the metadata of the database catalog.
      */

@@ -1,12 +1,12 @@
 package ed.inf.adbs.blazedb.operator;
 
-import ed.inf.adbs.blazedb.DatabaseCatalog;
 import ed.inf.adbs.blazedb.Tuple;
-import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.statement.select.SelectItem;
 import net.sf.jsqlparser.expression.Expression;
 
 import java.util.*;
+
+import static ed.inf.adbs.blazedb.Helper.getIndices;
 
 
 /**
@@ -15,13 +15,11 @@ import java.util.*;
 public class ProjectOperator extends Operator {
     private final Operator childOperator;
     private final List<SelectItem<?>> selectItems;
-    private final Map<String, List<String>> fullSchema;
     private final List<Integer> selectedColumnIndexes;
 
-    public ProjectOperator(Operator childOperator, List<SelectItem<?>> selectItems) {
+    public ProjectOperator(Operator childOperator, List<SelectItem<?>> selectItems, List<String> tableOrder) {
         this.childOperator = childOperator;
         this.selectItems = selectItems;
-        this.fullSchema = DatabaseCatalog.getInstance().getTableSchemas();
 
         // Determine which columns we need from the full schema
         if (isSelectAll()) {
@@ -30,21 +28,7 @@ public class ProjectOperator extends Operator {
             this.selectedColumnIndexes = new ArrayList<>();
             for (SelectItem<?> selectItem : selectItems) {
                 Expression expression = selectItem.getExpression();
-                Column column = (Column) expression;
-                String columnName = column.getColumnName();
-                String tableName = column.getTable().getName();
-
-                if (!fullSchema.containsKey(tableName)) {
-                    throw new IllegalArgumentException("Table not found in schema: " + tableName);
-                }
-
-                List<String> schema = fullSchema.get(tableName);
-                int columnIndex = schema.indexOf(columnName);
-
-                if (columnIndex == -1) {
-                    throw new IllegalArgumentException("Column not found in schema: " + columnName);
-                }
-                this.selectedColumnIndexes.add(columnIndex);
+                this.selectedColumnIndexes.addAll(getIndices(expression, tableOrder));
             }
         }
     }

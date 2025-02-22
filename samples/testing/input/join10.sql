@@ -1,0 +1,1 @@
+SELECT Student.*, Course.*, Enrolled.H FROM Enrolled, Student, Course WHERE Student.A = Enrolled.A AND Enrolled.E = Course.E AND Student.C < Course.E;
