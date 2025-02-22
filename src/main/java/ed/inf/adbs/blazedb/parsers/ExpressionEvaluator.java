@@ -24,7 +24,6 @@ public class ExpressionEvaluator {
         this.tableOrder = tableOrder;
         this.tuple = tuple;
         tableSchemas = DatabaseCatalog.getInstance().getTableSchemas(tableOrder);
-        System.out.println(tableOrder);
     }
 
     /**
@@ -90,6 +89,10 @@ public class ExpressionEvaluator {
 
             if (columnIndex == -1) {
                 throw new IllegalArgumentException("Column not found in schema: " + columnName);
+            }
+
+            for (int i = 0; i < tableOrder.indexOf(tableName); i++) {
+                columnIndex += tableSchemas.get(tableOrder.get(i)).size();
             }
 
             return Integer.parseInt(tuple.getValue(columnIndex).replaceAll("\\s",""));
