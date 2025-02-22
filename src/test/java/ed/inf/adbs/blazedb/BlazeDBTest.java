@@ -4,6 +4,7 @@ import static ed.inf.adbs.blazedb.Helper.CSV_Equals;
 import static org.junit.Assert.assertTrue;
 
 import ed.inf.adbs.blazedb.operator.Operator;
+import ed.inf.adbs.blazedb.operator.ProjectOperator;
 import ed.inf.adbs.blazedb.operator.ScanOperator;
 import ed.inf.adbs.blazedb.operator.SelectOperator;
 import ed.inf.adbs.blazedb.parsers.Parser;
@@ -74,5 +75,21 @@ public class BlazeDBTest {
 		}
 	}
 
+	@Test
+	public void Project_test1() throws IOException {
+		for (int i = 0; i < 3; i++) {
+			String name = "project" + (i+1);
+			String outputFile = OUTPUT_DIR + File.separator + name + ".csv";
+			String expFile = EXP_DIR + File.separator + name + ".csv";
+			String inputFile = INPUT_DIR + File.separator + name + ".sql";
+
+			Parser parser = new Parser(inputFile);
+			Operator scanOperator = new ScanOperator(parser.getFromTable().toString());
+			Operator projectOperator = new ProjectOperator(scanOperator, parser.getSelectItems());
+			BlazeDB.execute(projectOperator, outputFile);
+
+			assertTrue(CSV_Equals(outputFile, expFile));
+		}
+	}
 
 }
