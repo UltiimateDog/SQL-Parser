@@ -58,7 +58,6 @@ public class ProjectOperator extends Operator {
             return tuple;  // Return full tuple
         } else {
             List<String> projectedValues = new ArrayList<>();
-            System.out.println(selectedColumnIndexes);
             for (Integer selectedColumnIndex : selectedColumnIndexes) {
                 String value = tuple.getValue(selectedColumnIndex).replaceAll("\\s", "");
                 projectedValues.add(value);
