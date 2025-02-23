@@ -52,8 +52,13 @@ public class Helper {
         String columnName = parts[1];
         Map<String, List<String>> tableSchemas = DatabaseCatalog.getInstance().getTableSchemas(tableOrder);
 
-        if (!tableSchemas.containsKey(tableName)) {
+        if (!DatabaseCatalog.getInstance().getTableSchemas().containsKey(tableName)) {
             throw new IllegalArgumentException("Table not found in schema: " + tableName);
+        }
+
+        if (!tableSchemas.containsKey(tableName)) {
+            indices.add(-2);
+            return indices;
         }
 
         List<String> schema = tableSchemas.get(tableName);

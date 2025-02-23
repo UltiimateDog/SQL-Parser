@@ -82,7 +82,7 @@ public class ExpressionEvaluator {
         } else if (expression instanceof Column) {
             int columnIndex = getIndices(expression, tableOrder).get(0);
 
-            if (columnIndex >= tuple.getValues().size()) {
+            if (columnIndex >= tuple.getValues().size() || columnIndex == -2) {
                 ignoreFlag = true;
                 return 0;
             }

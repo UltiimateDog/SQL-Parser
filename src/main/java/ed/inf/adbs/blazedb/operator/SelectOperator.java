@@ -1,12 +1,10 @@
 package ed.inf.adbs.blazedb.operator;
 
-import ed.inf.adbs.blazedb.DatabaseCatalog;
 import ed.inf.adbs.blazedb.Tuple;
 import net.sf.jsqlparser.expression.Expression;
 import ed.inf.adbs.blazedb.parsers.ExpressionEvaluator;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * SelectOperator filters tuples based on WHERE conditions.
