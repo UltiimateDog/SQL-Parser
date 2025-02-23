@@ -1,0 +1,1 @@
+SELECT Student.*, Enrolled.E, Enrolled.H FROM Student, Enrolled ORDER BY Student.B, Enrolled.E;
