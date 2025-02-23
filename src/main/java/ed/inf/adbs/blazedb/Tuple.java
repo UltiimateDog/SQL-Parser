@@ -26,7 +26,7 @@ public class Tuple {
      * @return The value at the given index.
      */
     public String getValue(int index) {
-        return values.get(index);
+        return values.get(index).replaceAll("\\s", "");
     }
 
     public String toCSV() {

@@ -212,4 +212,40 @@ public class BlazeDBTest {
 		}
 	}
 
+	@Test
+	public void Sort_test1() throws IOException {
+		for (int i = 0; i < 3; i++) {
+			String name = "sort" + (i+1);
+			String outputFile = OUTPUT_DIR + File.separator + name + ".csv";
+			String expFile = EXP_DIR + File.separator + name + ".csv";
+			String inputFile = INPUT_DIR + File.separator + name + ".sql";
+
+			Parser parser = new Parser(inputFile);
+			Operator scanOperator = new ScanOperator(parser.getFromTable().toString());
+			Operator sortOperator = new SortOperator(scanOperator, parser.getOrderByElements(), parser.getTableOrder());
+			BlazeDB.execute(sortOperator, outputFile);
+
+			assertTrue(CSV_Equals(outputFile, expFile));
+		}
+	}
+
+	@Test
+	public void Sort_test2() throws IOException {
+		for (int i = 0; i < 1; i++) {
+			String name = "sort" + (i+4);
+			String outputFile = OUTPUT_DIR + File.separator + name + ".csv";
+			String expFile = EXP_DIR + File.separator + name + ".csv";
+			String inputFile = INPUT_DIR + File.separator + name + ".sql";
+
+			Parser parser = new Parser(inputFile);
+			Operator scanOperator = new ScanOperator(parser.getFromTable().toString());
+			Operator scanOperator2 = new ScanOperator(parser.getTableOrder().get(1));
+			Operator joinOperator = new JoinOperator(scanOperator, scanOperator2, parser.getWhereClause(), parser.getTableOrder());
+			Operator sortOperator = new SortOperator(joinOperator, parser.getOrderByElements(), parser.getTableOrder());
+			Operator projectOperator = new ProjectOperator(sortOperator, parser.getSelectItems(), parser.getTableOrder());
+			BlazeDB.execute(projectOperator, outputFile);
+
+			assertTrue(CSV_Equals(outputFile, expFile));
+		}
+	}
 }
