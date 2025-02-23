@@ -1,0 +1,1 @@
+SELECT DISTINCT Student.*, Enrolled.E FROM Student, Enrolled ORDER BY Student.B, Enrolled.E;
