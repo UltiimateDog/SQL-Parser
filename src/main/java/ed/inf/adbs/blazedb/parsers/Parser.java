@@ -18,7 +18,7 @@ public class Parser {
     private List<Join> joins;
     private Expression whereClause;
     private List<OrderByElement> orderByElements;
-    private List<Expression> groupByExpressions;
+    private List<String> groupByColumns;
     private List<String> tableOrder;
     private Boolean isDistinct;
 
@@ -35,7 +35,9 @@ public class Parser {
                 this.joins = plainSelect.getJoins();
                 this.whereClause = plainSelect.getWhere();
                 this.orderByElements = plainSelect.getOrderByElements();
-                this.groupByExpressions = plainSelect.getGroupBy() != null ? plainSelect.getGroupBy().getGroupByExpressionList() : null;
+                this.groupByColumns = plainSelect.getGroupBy() != null ?
+                        List.of(plainSelect.getGroupBy().getGroupByExpressionList().toString().replaceAll("\\s*", "").split(","))
+                        : null;
                 this.isDistinct = plainSelect.getDistinct() != null;
 
                 extractTableNames();
@@ -69,6 +71,6 @@ public class Parser {
         System.out.println("FROM:\t\t " + tableOrder);
         System.out.println("WHERE:\t\t " + (whereClause != null ? whereClause : "") );
         System.out.println("ORDER BY:\t " + (orderByElements != null ? orderByElements : ""));
-        System.out.println("GROUP BY:\t " + (groupByExpressions != null ? groupByExpressions : ""));
+        System.out.println("GROUP BY:\t " + (groupByColumns != null ? groupByColumns : ""));
     }
 }
