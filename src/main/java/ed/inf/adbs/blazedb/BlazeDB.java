@@ -6,6 +6,7 @@ import java.io.IOException;
 
 import ed.inf.adbs.blazedb.utility.Parser;
 import ed.inf.adbs.blazedb.operator.Operator;
+import ed.inf.adbs.blazedb.utility.Planner;
 
 /**
  * Lightweight in-memory database system.
@@ -16,7 +17,7 @@ import ed.inf.adbs.blazedb.operator.Operator;
  */
 public class BlazeDB {
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
 
 		if (args.length != 3) {
 			System.err.println("Usage: BlazeDB database_dir input_file output_file");
@@ -30,7 +31,8 @@ public class BlazeDB {
 		// Just for demonstration, replace this function call with your logic
 		DatabaseCatalog catalog = DatabaseCatalog.getInstance(databaseDir);
 		Parser parser = new Parser(inputFile);
-		parser.printExpression();
+		Planner planner = new Planner(parser);
+		execute(planner.buildQueryPlan(), outputFile);
 	}
 
 	/**

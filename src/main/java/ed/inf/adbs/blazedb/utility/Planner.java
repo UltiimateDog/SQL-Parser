@@ -25,6 +25,10 @@ public class Planner {
      */
     public Operator buildQueryPlan() throws IOException {
         Operator rootOperator = createBaseOperators();
+        // ✅ Apply ORDER BY
+        if (parser.getOrderByElements() != null) {
+            rootOperator = new SortOperator(rootOperator, parser);
+        }
 
         // ✅ Apply GROUP BY + SUM
         if (parser.getGroupByColumns() != null || !parser.getSumColumns().isEmpty()) {
@@ -39,10 +43,7 @@ public class Planner {
             rootOperator = new DistinctOperator(rootOperator);
         }
 
-        // ✅ Apply ORDER BY
-        if (parser.getOrderByElements() != null) {
-            rootOperator = new SortOperator(rootOperator, parser);
-        }
+
 
         return rootOperator;
     }
