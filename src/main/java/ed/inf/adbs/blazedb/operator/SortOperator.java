@@ -1,13 +1,11 @@
 package ed.inf.adbs.blazedb.operator;
 
-import ed.inf.adbs.blazedb.DatabaseCatalog;
 import ed.inf.adbs.blazedb.Tuple;
-import ed.inf.adbs.blazedb.parsers.Parser;
+import ed.inf.adbs.blazedb.utility.Parser;
 import net.sf.jsqlparser.statement.select.OrderByElement;
 import net.sf.jsqlparser.expression.Expression;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 

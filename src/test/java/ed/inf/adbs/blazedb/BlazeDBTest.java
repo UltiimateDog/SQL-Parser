@@ -1,11 +1,10 @@
 package ed.inf.adbs.blazedb;
 
 import static ed.inf.adbs.blazedb.Helper.CSV_Equals;
-import static ed.inf.adbs.blazedb.Helper.getComparedTables;
 import static org.junit.Assert.assertTrue;
 
 import ed.inf.adbs.blazedb.operator.*;
-import ed.inf.adbs.blazedb.parsers.Parser;
+import ed.inf.adbs.blazedb.utility.Parser;
 import org.junit.Test;
 
 import java.io.File;

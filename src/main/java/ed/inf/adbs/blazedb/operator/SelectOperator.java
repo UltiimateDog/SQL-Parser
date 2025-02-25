@@ -1,9 +1,9 @@
 package ed.inf.adbs.blazedb.operator;
 
 import ed.inf.adbs.blazedb.Tuple;
-import ed.inf.adbs.blazedb.parsers.Parser;
+import ed.inf.adbs.blazedb.utility.Parser;
 import net.sf.jsqlparser.expression.Expression;
-import ed.inf.adbs.blazedb.parsers.ExpressionEvaluator;
+import ed.inf.adbs.blazedb.utility.ExpressionEvaluator;
 
 import java.util.List;
 

@@ -1,6 +1,5 @@
-package ed.inf.adbs.blazedb.parsers;
+package ed.inf.adbs.blazedb.utility;
 
-import ed.inf.adbs.blazedb.DatabaseCatalog;
 import ed.inf.adbs.blazedb.Tuple;
 import lombok.Getter;
 import net.sf.jsqlparser.expression.*;
@@ -9,9 +8,7 @@ import net.sf.jsqlparser.expression.operators.relational.*;
 import net.sf.jsqlparser.schema.Column;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static ed.inf.adbs.blazedb.Helper.getIndices;
 

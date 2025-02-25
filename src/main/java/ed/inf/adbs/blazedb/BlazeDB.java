@@ -1,16 +1,10 @@
 package ed.inf.adbs.blazedb;
 
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.BufferedWriter;
 import java.io.IOException;
 
-import ed.inf.adbs.blazedb.parsers.Parser;
-import net.sf.jsqlparser.parser.CCJSqlParserUtil;
-import net.sf.jsqlparser.statement.Statement;
-import net.sf.jsqlparser.statement.select.Join;
-import net.sf.jsqlparser.statement.select.PlainSelect;
-import net.sf.jsqlparser.statement.select.Select;
+import ed.inf.adbs.blazedb.utility.Parser;
 import ed.inf.adbs.blazedb.operator.Operator;
 
 /**
