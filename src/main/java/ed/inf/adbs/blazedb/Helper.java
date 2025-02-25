@@ -1,9 +1,10 @@
 package ed.inf.adbs.blazedb;
 import net.sf.jsqlparser.expression.Expression;
-import net.sf.jsqlparser.schema.Column;
 
 import java.io.*;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class Helper {
@@ -43,9 +44,20 @@ public class Helper {
         String expressionStr = expression.toString();
 
         // Extract table and column name from the expression
-        String[] parts = expressionStr.split("\\.");
+        return getIndicesList(expressionStr, tableOrder, indices);
+    }
+
+    public static List<Integer> getIndices(String expression, List<String> tableOrder) {
+        List<Integer> indices = new ArrayList<>();
+
+        // Extract table and column name from the expression
+        return getIndicesList(expression, tableOrder, indices);
+    }
+
+    private static List<Integer> getIndicesList(String expression, List<String> tableOrder, List<Integer> indices) {
+        String[] parts = expression.split("\\.");
         if (parts.length != 2) {
-            throw new IllegalArgumentException("Invalid column expression: " + expressionStr);
+            throw new IllegalArgumentException("Invalid column expression: " + expression);
         }
 
         String tableName = parts[0];
@@ -103,5 +115,15 @@ public class Helper {
 
         return comparedTables;
     }
+
+    public static String extractSumExpression(String input) {
+        // Define regex pattern to match SUM(expression)
+        Pattern pattern = Pattern.compile("SUM\\((.*?)\\)");
+        Matcher matcher = pattern.matcher(input);
+
+        // If a match is found, return the extracted expression
+        return matcher.find() ? matcher.group(1) : null;
+    }
+
 }
 

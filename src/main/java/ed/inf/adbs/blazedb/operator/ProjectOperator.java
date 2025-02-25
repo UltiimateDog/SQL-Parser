@@ -1,6 +1,7 @@
 package ed.inf.adbs.blazedb.operator;
 
 import ed.inf.adbs.blazedb.Tuple;
+import ed.inf.adbs.blazedb.parsers.Parser;
 import net.sf.jsqlparser.statement.select.SelectItem;
 import net.sf.jsqlparser.expression.Expression;
 
@@ -17,9 +18,9 @@ public class ProjectOperator extends Operator {
     private final List<SelectItem<?>> selectItems;
     private final List<Integer> selectedColumnIndexes;
 
-    public ProjectOperator(Operator childOperator, List<SelectItem<?>> selectItems, List<String> tableOrder) {
+    public ProjectOperator(Operator childOperator, Parser parser) {
         this.childOperator = childOperator;
-        this.selectItems = selectItems;
+        this.selectItems = parser.getSelectItems();
 
         // Determine which columns we need from the full schema
         if (isSelectAll()) {
@@ -28,7 +29,7 @@ public class ProjectOperator extends Operator {
             this.selectedColumnIndexes = new ArrayList<>();
             for (SelectItem<?> selectItem : selectItems) {
                 Expression expression = selectItem.getExpression();
-                this.selectedColumnIndexes.addAll(getIndices(expression, tableOrder));
+                this.selectedColumnIndexes.addAll(getIndices(expression, parser.getTableOrder()));
             }
         }
     }

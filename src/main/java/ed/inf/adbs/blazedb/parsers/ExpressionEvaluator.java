@@ -27,6 +27,23 @@ public class ExpressionEvaluator {
         this.tuple = tuple;
     }
 
+    public int evaluateSumExpression(String expression) {
+        expression = expression.replaceAll("\\s+", " ");
+        List<String> columns = List.of(expression.split("\\*"));
+        int product = 1;
+        for (String column : columns) {
+            if (!column.contains(".")) {
+                int value = Integer.parseInt(column.replaceAll("\\s",""));
+                product *= value;
+                continue;
+            }
+            int columnIndex = getIndices(column.replaceAll("\\s",""), tableOrder).get(0);
+            int value = Integer.parseInt(tuple.getValue(columnIndex).replaceAll("\\s",""));
+            product *= value;
+        }
+        return product;
+    }
+
     /**
      * Evaluates the given SQL WHERE expression on the tuple.
      * @param expression The WHERE clause expression.
@@ -91,4 +108,5 @@ public class ExpressionEvaluator {
         }
         throw new IllegalArgumentException("Unsupported expression: " + expression);
     }
+
 }
