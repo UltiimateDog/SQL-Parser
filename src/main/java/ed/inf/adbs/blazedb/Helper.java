@@ -43,9 +43,20 @@ public class Helper {
         String expressionStr = expression.toString();
 
         // Extract table and column name from the expression
-        String[] parts = expressionStr.split("\\.");
+        return getIndicesList(expressionStr, tableOrder, indices);
+    }
+
+    public static List<Integer> getIndices(String expression, List<String> tableOrder) {
+        List<Integer> indices = new ArrayList<>();
+
+        // Extract table and column name from the expression
+        return getIndicesList(expression, tableOrder, indices);
+    }
+
+    private static List<Integer> getIndicesList(String expression, List<String> tableOrder, List<Integer> indices) {
+        String[] parts = expression.split("\\.");
         if (parts.length != 2) {
-            throw new IllegalArgumentException("Invalid column expression: " + expressionStr);
+            throw new IllegalArgumentException("Invalid column expression: " + expression);
         }
 
         String tableName = parts[0];

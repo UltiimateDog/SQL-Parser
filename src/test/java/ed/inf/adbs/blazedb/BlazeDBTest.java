@@ -260,13 +260,40 @@ public class BlazeDBTest {
 			Parser parser = new Parser(inputFile);
 			Operator scanOperator = new ScanOperator(parser.getFromTable().toString());
 			Operator scanOperator2 = new ScanOperator(parser.getTableOrder().get(1));
-			Operator joinOperator = new JoinOperator(scanOperator, scanOperator2, parser.getWhereClause(), parser.getTableOrder());
-			Operator sortOperator = new SortOperator(joinOperator, parser.getOrderByElements(), parser.getTableOrder());
-			Operator projectOperator = new ProjectOperator(sortOperator, parser.getSelectItems(), parser.getTableOrder());
+			Operator joinOperator = new JoinOperator(scanOperator,
+					scanOperator2, parser.getWhereClause(),
+					parser.getTableOrder());
+			Operator sortOperator = new SortOperator(joinOperator,
+					parser.getOrderByElements(),
+					parser.getTableOrder());
+			Operator projectOperator = new ProjectOperator(sortOperator,
+					parser.getSelectItems(),
+					parser.getTableOrder());
 			Operator distinctOperator = new DistinctOperator(projectOperator);
 			BlazeDB.execute(distinctOperator, outputFile);
 
 			assertTrue(CSV_Equals(outputFile, expFile));
 		}
 	}
+
+	/*
+	@Test
+	public void Sum_test1() throws IOException {
+		for (int i = 0; i < 1; i++) {
+			String name = "sum" + (i+1);
+			String outputFile = OUTPUT_DIR + File.separator + name + ".csv";
+			String expFile = EXP_DIR + File.separator + name + ".csv";
+			String inputFile = INPUT_DIR + File.separator + name + ".sql";
+
+			Parser parser = new Parser(inputFile);
+			Operator scanOperator = new ScanOperator(parser.getFromTable().toString());
+			Operator sumOperator = new SumOperator(scanOperator,
+					parser.getGroupByColumns(),
+					parser.getSelectItems().get(0).getExpression());
+			BlazeDB.execute(sumOperator, outputFile);
+
+			assertTrue(CSV_Equals(outputFile, expFile));
+		}
+	}
+	 */
 }
