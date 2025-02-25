@@ -1,9 +1,10 @@
 package ed.inf.adbs.blazedb;
 import net.sf.jsqlparser.expression.Expression;
-import net.sf.jsqlparser.schema.Column;
 
 import java.io.*;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class Helper {
@@ -114,5 +115,15 @@ public class Helper {
 
         return comparedTables;
     }
+
+    public static String extractSumExpression(String input) {
+        // Define regex pattern to match SUM(expression)
+        Pattern pattern = Pattern.compile("SUM\\((.*?)\\)");
+        Matcher matcher = pattern.matcher(input);
+
+        // If a match is found, return the extracted expression
+        return matcher.find() ? matcher.group(1) : null;
+    }
+
 }
 

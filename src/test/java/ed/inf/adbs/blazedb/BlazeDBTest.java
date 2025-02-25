@@ -276,7 +276,6 @@ public class BlazeDBTest {
 		}
 	}
 
-	/*
 	@Test
 	public void Sum_test1() throws IOException {
 		for (int i = 0; i < 1; i++) {
@@ -289,11 +288,12 @@ public class BlazeDBTest {
 			Operator scanOperator = new ScanOperator(parser.getFromTable().toString());
 			Operator sumOperator = new SumOperator(scanOperator,
 					parser.getGroupByColumns(),
-					parser.getSelectItems().get(0).getExpression());
+					parser.getSelectItems().get(0).getExpression(),
+					parser.getTableOrder());
 			BlazeDB.execute(sumOperator, outputFile);
 
 			assertTrue(CSV_Equals(outputFile, expFile));
 		}
 	}
-	 */
+
 }

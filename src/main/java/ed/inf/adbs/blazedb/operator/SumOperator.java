@@ -1,14 +1,14 @@
 package ed.inf.adbs.blazedb.operator;
 
 import ed.inf.adbs.blazedb.Tuple;
+import ed.inf.adbs.blazedb.parsers.ExpressionEvaluator;
 import net.sf.jsqlparser.expression.Expression;
-import net.sf.jsqlparser.expression.Function;
-import net.sf.jsqlparser.expression.operators.arithmetic.Multiplication;
-import net.sf.jsqlparser.expression.operators.relational.EqualsTo;
-import net.sf.jsqlparser.schema.Column;
-import net.sf.jsqlparser.statement.select.SelectItem;
+
 
 import java.util.*;
+
+import static ed.inf.adbs.blazedb.Helper.extractSumExpression;
+import static ed.inf.adbs.blazedb.Helper.getIndices;
 
 /**
  * SumOperator handles GROUP BY and SUM aggregation.
@@ -16,7 +16,7 @@ import java.util.*;
 public class SumOperator extends Operator {
     private final Operator childOperator;
     private final List<String> groupByColumns;
-    private final Expression sumExpression;
+    private final String sumExpression;
     private final Map<List<String>, Integer> groupSumMap; // Group key → SUM result
     private Iterator<Map.Entry<List<String>, Integer>> iterator;
     private final List<String> tableOrder; // Stores the table processing order
@@ -28,7 +28,7 @@ public class SumOperator extends Operator {
         this.childOperator = childOperator;
         this.groupByColumns = groupByColumns;
         this.tableOrder = tableOrder;
-        this.sumExpression = sumExpression;
+        this.sumExpression = sumExpression.toString();
         this.groupSumMap = new LinkedHashMap<>();
         aggregateTuples(); // Process and compute SUM
         this.iterator = groupSumMap.entrySet().iterator();
@@ -41,7 +41,8 @@ public class SumOperator extends Operator {
         Tuple tuple;
         while ((tuple = childOperator.getNextTuple()) != null) {
             List<String> groupKey = extractGroupKey(tuple);
-            int sumValue = evaluateSumExpression(tuple);
+            ExpressionEvaluator evaluator = new ExpressionEvaluator(tableOrder, tuple);
+            int sumValue = evaluator.evaluateSumExpression(extractSumExpression(sumExpression));
 
             groupSumMap.put(groupKey, groupSumMap.getOrDefault(groupKey, 0) + sumValue);
         }
@@ -69,38 +70,9 @@ public class SumOperator extends Operator {
     private List<String> extractGroupKey(Tuple tuple) {
         List<String> key = new ArrayList<>();
         for (String column : groupByColumns) {
-            System.out.println(column);
-            int index = tuple.getValues().indexOf(column);
+            int index = getIndices(column, tableOrder).get(0);
             key.add(tuple.getValue(index));
         }
         return key;
-    }
-
-    /**
-     * Evaluates SUM expression (handles column values and multiplications).
-     */
-    private int evaluateSumExpression(Tuple tuple) {
-        if (sumExpression instanceof Column) {
-            String columnName = ((Column) sumExpression).getFullyQualifiedName();
-            int index = tuple.getValues().indexOf(columnName);
-            return Integer.parseInt(tuple.getValue(index));
-        } else if (sumExpression instanceof Multiplication) {
-            // Handle SUM(A * B)
-            Multiplication multiplication = (Multiplication) sumExpression;
-            int leftValue = evaluateSumExpression(tuple, multiplication.getLeftExpression());
-            int rightValue = evaluateSumExpression(tuple, multiplication.getRightExpression());
-            return leftValue * rightValue;
-        }
-        throw new IllegalArgumentException("Unsupported SUM expression: " + sumExpression);
-    }
-
-    private int evaluateSumExpression(Tuple tuple, Expression expression) {
-        if (expression instanceof Column) {
-            String columnName = ((Column) expression).getFullyQualifiedName();
-            int index = tuple.getValues().indexOf(columnName);
-            return Integer.parseInt(tuple.getValue(index));
-        } else {
-            throw new IllegalArgumentException("Unsupported SUM term: " + expression);
-        }
     }
 }
