@@ -62,7 +62,19 @@ public class SumOperator extends Operator {
         if (!iterator.hasNext()) return null;
 
         Map.Entry<List<String>, List<Integer>> entry = iterator.next();
-        List<String> resultValues = new ArrayList<>(entry.getKey());
+        List<String> resultValues = new ArrayList<>();
+
+        if (!selectColumns.isEmpty()) {
+            for (String column : selectColumns) {
+                int index = groupByColumns.indexOf(column);
+                resultValues.add(entry.getKey().get(index));
+            }
+        }
+
+        if (sumColumns.isEmpty()) {
+            return new Tuple(resultValues.toArray(new String[0]));
+        }
+
         entry.getValue().forEach(sum -> resultValues.add(String.valueOf(sum))); // Add SUM results
 
         return new Tuple(resultValues.toArray(new String[0]));
@@ -78,6 +90,10 @@ public class SumOperator extends Operator {
      */
     private List<String> extractGroupKey(Tuple tuple) {
         List<String> key = new ArrayList<>();
+        if (groupByColumns == null) {
+            key.add("");
+            return key;
+        }
         for (String column : groupByColumns) {
             int index = getIndices(column, tableOrder).get(0);
             key.add(tuple.getValue(index));
