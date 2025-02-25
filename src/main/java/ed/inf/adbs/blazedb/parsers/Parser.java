@@ -1,5 +1,6 @@
 package ed.inf.adbs.blazedb.parsers;
 
+import ed.inf.adbs.blazedb.Tuple;
 import lombok.Getter;
 import net.sf.jsqlparser.expression.Function;
 import net.sf.jsqlparser.parser.CCJSqlParserUtil;
@@ -20,6 +21,7 @@ public class Parser {
     private FromItem fromTable;
     private List<Join> joins;
     private Expression whereClause;
+    private List<String> tablesInWhere;
     private List<OrderByElement> orderByElements;
     private List<String> groupByColumns;
     private List<String> tableOrder;
@@ -47,6 +49,7 @@ public class Parser {
                 this.sumColumns = new ArrayList<>();
                 separateSumExpressions();
                 extractTableNames();
+                extractTablesFromWhereClause();
             }
         } catch (Exception e) {
             System.err.println("Exception occurred during parsing");
@@ -86,6 +89,16 @@ public class Parser {
         }
     }
 
+    private void extractTablesFromWhereClause() {
+        ExpressionEvaluator evaluator = new ExpressionEvaluator(
+                List.of(new String[] { "" }),
+                new Tuple(new String[] { "" }));
+        if (whereClause != null) {
+            evaluator.evaluate(whereClause);
+            tablesInWhere = evaluator.getTablesForExpression();
+        }
+    }
+
     public void printExpression() {
         // Print parsed SQL components
         System.out.println("Parsed SQL Statement: " + parsedSQL + "\n");
@@ -96,5 +109,6 @@ public class Parser {
         System.out.println("WHERE:\t\t " + (whereClause != null ? whereClause : "") );
         System.out.println("ORDER BY:\t " + (orderByElements != null ? orderByElements : ""));
         System.out.println("GROUP BY:\t " + (groupByColumns != null ? groupByColumns : ""));
+        System.out.println("T:\t\t " + tablesInWhere);
     }
 }

@@ -2,11 +2,13 @@ package ed.inf.adbs.blazedb.parsers;
 
 import ed.inf.adbs.blazedb.DatabaseCatalog;
 import ed.inf.adbs.blazedb.Tuple;
+import lombok.Getter;
 import net.sf.jsqlparser.expression.*;
 import net.sf.jsqlparser.expression.operators.conditional.AndExpression;
 import net.sf.jsqlparser.expression.operators.relational.*;
 import net.sf.jsqlparser.schema.Column;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,6 +23,9 @@ public class ExpressionEvaluator {
     private final List<String> tableOrder; // TableName -> Column Names
     private final Tuple tuple; // The tuple being evaluated
     private Boolean ignoreFlag;
+    private String currentTables;
+    @Getter
+    private List<String> tablesForExpression = new ArrayList<>();
 
     public ExpressionEvaluator(List<String> tableOrder, Tuple tuple) {
         this.tableOrder = tableOrder;
@@ -74,8 +79,13 @@ public class ExpressionEvaluator {
      */
     private boolean evaluateComparison(BinaryExpression expression, String operator) {
         ignoreFlag = false;
+        currentTables = "";
         int leftValue = extractValue(expression.getLeftExpression());
         int rightValue = extractValue(expression.getRightExpression());
+
+        if (!currentTables.isEmpty()) {
+            tablesForExpression.add(currentTables);
+        }
 
         if (ignoreFlag) return true;
 
@@ -98,6 +108,11 @@ public class ExpressionEvaluator {
             return (int) ((LongValue) expression).getValue();
         } else if (expression instanceof Column) {
             int columnIndex = getIndices(expression, tableOrder).get(0);
+
+            if (!currentTables.isEmpty()) {
+                currentTables += ",";
+            }
+            currentTables += expression.toString().split("\\.")[0].replaceAll("\\s*", "");
 
             if (columnIndex >= tuple.getValues().size() || columnIndex == -2) {
                 ignoreFlag = true;

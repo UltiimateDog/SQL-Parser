@@ -15,10 +15,10 @@ public class SelectOperator extends Operator {
     private final Expression whereClause;
     private final List<String> tableOrder;
 
-    public SelectOperator(Operator childOperator, Parser parser) {
+    public SelectOperator(Operator childOperator, Parser parser, List<String> tableOrder) {
         this.childOperator = childOperator;
         this.whereClause = parser.getWhereClause();
-        this.tableOrder = parser.getTableOrder();
+        this.tableOrder = tableOrder;
     }
 
     @Override

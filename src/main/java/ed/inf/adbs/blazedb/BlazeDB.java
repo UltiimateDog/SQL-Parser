@@ -34,6 +34,7 @@ public class BlazeDB {
 		String outputFile = args[2];
 
 		// Just for demonstration, replace this function call with your logic
+		DatabaseCatalog catalog = DatabaseCatalog.getInstance(databaseDir);
 		Parser parser = new Parser(inputFile);
 		parser.printExpression();
 	}
