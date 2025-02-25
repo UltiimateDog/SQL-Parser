@@ -2,6 +2,7 @@ package ed.inf.adbs.blazedb.operator;
 
 import ed.inf.adbs.blazedb.Tuple;
 import ed.inf.adbs.blazedb.parsers.ExpressionEvaluator;
+import ed.inf.adbs.blazedb.parsers.Parser;
 import net.sf.jsqlparser.expression.Expression;
 
 
@@ -16,19 +17,18 @@ import static ed.inf.adbs.blazedb.Helper.getIndices;
 public class SumOperator extends Operator {
     private final Operator childOperator;
     private final List<String> groupByColumns;
-    private final String sumExpression;
+    private final List<String> sumColumns;
+    private final List<String> selectColumns;
     private final Map<List<String>, Integer> groupSumMap; // Group key → SUM result
     private Iterator<Map.Entry<List<String>, Integer>> iterator;
     private final List<String> tableOrder; // Stores the table processing order
 
-    public SumOperator(Operator childOperator,
-                       List<String> groupByColumns,
-                       Expression sumExpression,
-                       List<String> tableOrder) {
+    public SumOperator(Operator childOperator, Parser parser) {
         this.childOperator = childOperator;
-        this.groupByColumns = groupByColumns;
-        this.tableOrder = tableOrder;
-        this.sumExpression = sumExpression.toString();
+        this.groupByColumns = parser.getGroupByColumns();
+        this.tableOrder = parser.getTableOrder();
+        this.sumColumns = parser.getSumColumns();
+        this.selectColumns = parser.getSelectColumns();
         this.groupSumMap = new LinkedHashMap<>();
         aggregateTuples(); // Process and compute SUM
         this.iterator = groupSumMap.entrySet().iterator();
@@ -42,7 +42,7 @@ public class SumOperator extends Operator {
         while ((tuple = childOperator.getNextTuple()) != null) {
             List<String> groupKey = extractGroupKey(tuple);
             ExpressionEvaluator evaluator = new ExpressionEvaluator(tableOrder, tuple);
-            int sumValue = evaluator.evaluateSumExpression(extractSumExpression(sumExpression));
+            int sumValue = evaluator.evaluateSumExpression(extractSumExpression(sumColumns.get(0)));
 
             groupSumMap.put(groupKey, groupSumMap.getOrDefault(groupKey, 0) + sumValue);
         }

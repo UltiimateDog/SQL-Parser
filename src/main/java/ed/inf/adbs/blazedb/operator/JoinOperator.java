@@ -2,6 +2,7 @@ package ed.inf.adbs.blazedb.operator;
 
 import ed.inf.adbs.blazedb.Tuple;
 import ed.inf.adbs.blazedb.parsers.ExpressionEvaluator;
+import ed.inf.adbs.blazedb.parsers.Parser;
 import net.sf.jsqlparser.expression.Expression;
 
 import java.util.ArrayList;
@@ -20,12 +21,11 @@ public class JoinOperator extends Operator {
 
     public JoinOperator(Operator leftChild,
                         Operator rightChild,
-                        Expression joinCondition,
-                        List<String> tableOrder) {
+                        Parser parser) {
         this.leftChild = leftChild;
         this.rightChild = rightChild;
-        this.joinCondition = joinCondition;
-        this.tableOrder = tableOrder;
+        this.joinCondition = parser.getWhereClause();
+        this.tableOrder = parser.getTableOrder();
         this.leftTuple = leftChild.getNextTuple();  // Start with first left tuple
     }
 

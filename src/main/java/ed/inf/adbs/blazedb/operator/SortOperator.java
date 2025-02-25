@@ -2,6 +2,7 @@ package ed.inf.adbs.blazedb.operator;
 
 import ed.inf.adbs.blazedb.DatabaseCatalog;
 import ed.inf.adbs.blazedb.Tuple;
+import ed.inf.adbs.blazedb.parsers.Parser;
 import net.sf.jsqlparser.statement.select.OrderByElement;
 import net.sf.jsqlparser.expression.Expression;
 
@@ -22,10 +23,10 @@ public class SortOperator extends Operator {
     private final List<String> tableOrder; // Stores the table processing order
     private int currentIndex;
 
-    public SortOperator(Operator childOperator, List<OrderByElement> orderByElements, List<String> tableOrder) {
+    public SortOperator(Operator childOperator, Parser parser) {
         this.childOperator = childOperator;
-        this.orderByElements = orderByElements;
-        this.tableOrder = tableOrder;
+        this.orderByElements = parser.getOrderByElements();
+        this.tableOrder = parser.getTableOrder();
         this.sortedTuples = new ArrayList<>();
         this.currentIndex = 0;
         loadAndSortTuples(); // Sort tuples on initialization
