@@ -1,6 +1,7 @@
 package ed.inf.adbs.blazedb.parsers;
 
 import lombok.Getter;
+import net.sf.jsqlparser.expression.Function;
 import net.sf.jsqlparser.parser.CCJSqlParserUtil;
 import net.sf.jsqlparser.statement.Statement;
 import net.sf.jsqlparser.statement.select.*;
@@ -14,6 +15,8 @@ import java.util.List;
 public class Parser {
     private String parsedSQL;
     private List<SelectItem<?>> selectItems;
+    private List<String> selectColumns;
+    private List<String> sumColumns;
     private FromItem fromTable;
     private List<Join> joins;
     private Expression whereClause;
@@ -40,6 +43,9 @@ public class Parser {
                         : null;
                 this.isDistinct = plainSelect.getDistinct() != null;
 
+                this.selectColumns = new ArrayList<>();
+                this.sumColumns = new ArrayList<>();
+                separateSumExpressions();
                 extractTableNames();
             }
         } catch (Exception e) {
@@ -63,10 +69,28 @@ public class Parser {
         }
     }
 
+    /**
+     * Separates SUM(expression) from normal column expressions in selectItems.
+     */
+    private void separateSumExpressions() {
+        for (SelectItem<?> item : selectItems) {
+            Expression expression = item.getExpression();
+            if (expression instanceof Function) {
+                Function function = (Function) expression;
+                if ("SUM".equalsIgnoreCase(function.getName())) {
+                    sumColumns.add(item.toString());
+                    continue;
+                }
+            }
+            selectColumns.add(item.toString());
+        }
+    }
+
     public void printExpression() {
         // Print parsed SQL components
         System.out.println("Parsed SQL Statement: " + parsedSQL + "\n");
-        System.out.println("SELECT:\t\t " + selectItems);
+        System.out.println("SELECT:\t\t " + selectColumns);
+        System.out.println("SUM:\t\t " + sumColumns);
         System.out.println("DISTINCT:\t " + (isDistinct ? "true" : ""));
         System.out.println("FROM:\t\t " + tableOrder);
         System.out.println("WHERE:\t\t " + (whereClause != null ? whereClause : "") );

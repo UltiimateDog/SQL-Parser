@@ -296,4 +296,32 @@ public class BlazeDBTest {
 		}
 	}
 
+	@Test
+	public void Sum_test2() throws IOException {
+		for (int i = 0; i < 1; i++) {
+			String name = "sum" + (i+2);
+			String outputFile = OUTPUT_DIR + File.separator + name + ".csv";
+			String expFile = EXP_DIR + File.separator + name + ".csv";
+			String inputFile = INPUT_DIR + File.separator + name + ".sql";
+
+			Parser parser = new Parser(inputFile);
+			Operator scanOperator = new ScanOperator(parser.getFromTable().toString());
+			Operator scanOperator2 = new ScanOperator(parser.getTableOrder().get(1));
+			Operator joinOperator = new JoinOperator(scanOperator,
+					scanOperator2,
+					parser.getWhereClause(),
+					parser.getTableOrder());
+			Operator sortOperator = new SortOperator(joinOperator,
+					parser.getOrderByElements(),
+					parser.getTableOrder());
+			Operator sumOperator = new SumOperator(sortOperator,
+					parser.getGroupByColumns(),
+					parser.getSelectItems().get(0).getExpression(),
+					parser.getTableOrder());
+			BlazeDB.execute(sumOperator, outputFile);
+
+			assertTrue(CSV_Equals(outputFile, expFile));
+		}
+	}
+
 }
