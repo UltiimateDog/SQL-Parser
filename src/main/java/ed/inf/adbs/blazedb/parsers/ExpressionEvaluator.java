@@ -37,7 +37,7 @@ public class ExpressionEvaluator {
                 product *= value;
                 continue;
             }
-            int columnIndex = getIndices(column, tableOrder).get(0);
+            int columnIndex = getIndices(column.replaceAll("\\s",""), tableOrder).get(0);
             int value = Integer.parseInt(tuple.getValue(columnIndex).replaceAll("\\s",""));
             product *= value;
         }

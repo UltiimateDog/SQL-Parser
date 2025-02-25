@@ -270,7 +270,6 @@ public class BlazeDBTest {
 		}
 	}
 
-	/*
 	@Test
 	public void Sum_test1() throws IOException {
 		for (int i = 0; i < 1; i++) {
@@ -307,7 +306,5 @@ public class BlazeDBTest {
 			assertTrue(CSV_Equals(outputFile, expFile));
 		}
 	}
-
-	 */
 
 }
