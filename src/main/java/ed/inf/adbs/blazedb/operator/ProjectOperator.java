@@ -1,7 +1,7 @@
 package ed.inf.adbs.blazedb.operator;
 
 import ed.inf.adbs.blazedb.Tuple;
-import ed.inf.adbs.blazedb.parsers.Parser;
+import ed.inf.adbs.blazedb.utility.Parser;
 import net.sf.jsqlparser.statement.select.SelectItem;
 import net.sf.jsqlparser.expression.Expression;
 

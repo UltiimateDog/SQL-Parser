@@ -1,9 +1,9 @@
 package ed.inf.adbs.blazedb.operator;
 
 import ed.inf.adbs.blazedb.Tuple;
-import ed.inf.adbs.blazedb.parsers.Parser;
+import ed.inf.adbs.blazedb.utility.Parser;
 import net.sf.jsqlparser.expression.Expression;
-import ed.inf.adbs.blazedb.parsers.ExpressionEvaluator;
+import ed.inf.adbs.blazedb.utility.ExpressionEvaluator;
 
 import java.util.List;
 
@@ -15,10 +15,10 @@ public class SelectOperator extends Operator {
     private final Expression whereClause;
     private final List<String> tableOrder;
 
-    public SelectOperator(Operator childOperator, Parser parser) {
+    public SelectOperator(Operator childOperator, Parser parser, List<String> tableOrder) {
         this.childOperator = childOperator;
         this.whereClause = parser.getWhereClause();
-        this.tableOrder = parser.getTableOrder();
+        this.tableOrder = tableOrder;
     }
 
     @Override

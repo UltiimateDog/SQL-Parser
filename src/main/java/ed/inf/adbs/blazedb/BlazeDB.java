@@ -1,17 +1,12 @@
 package ed.inf.adbs.blazedb;
 
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.BufferedWriter;
 import java.io.IOException;
 
-import ed.inf.adbs.blazedb.parsers.Parser;
-import net.sf.jsqlparser.parser.CCJSqlParserUtil;
-import net.sf.jsqlparser.statement.Statement;
-import net.sf.jsqlparser.statement.select.Join;
-import net.sf.jsqlparser.statement.select.PlainSelect;
-import net.sf.jsqlparser.statement.select.Select;
+import ed.inf.adbs.blazedb.utility.Parser;
 import ed.inf.adbs.blazedb.operator.Operator;
+import ed.inf.adbs.blazedb.utility.Planner;
 
 /**
  * Lightweight in-memory database system.
@@ -22,7 +17,7 @@ import ed.inf.adbs.blazedb.operator.Operator;
  */
 public class BlazeDB {
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
 
 		if (args.length != 3) {
 			System.err.println("Usage: BlazeDB database_dir input_file output_file");
@@ -34,8 +29,10 @@ public class BlazeDB {
 		String outputFile = args[2];
 
 		// Just for demonstration, replace this function call with your logic
+		DatabaseCatalog catalog = DatabaseCatalog.getInstance(databaseDir);
 		Parser parser = new Parser(inputFile);
-		parser.printExpression();
+		Planner planner = new Planner(parser);
+		execute(planner.buildQueryPlan(), outputFile);
 	}
 
 	/**

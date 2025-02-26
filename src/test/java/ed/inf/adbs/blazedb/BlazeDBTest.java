@@ -1,11 +1,10 @@
 package ed.inf.adbs.blazedb;
 
 import static ed.inf.adbs.blazedb.Helper.CSV_Equals;
-import static ed.inf.adbs.blazedb.Helper.getComparedTables;
 import static org.junit.Assert.assertTrue;
 
 import ed.inf.adbs.blazedb.operator.*;
-import ed.inf.adbs.blazedb.parsers.Parser;
+import ed.inf.adbs.blazedb.utility.Parser;
 import org.junit.Test;
 
 import java.io.File;
@@ -50,7 +49,7 @@ public class BlazeDBTest {
 
 			Parser parser = new Parser(inputFile);
 			Operator scanOperator = new ScanOperator(parser.getFromTable().toString());
-			Operator selectOperator = new SelectOperator(scanOperator, parser);
+			Operator selectOperator = new SelectOperator(scanOperator, parser, parser.getTableOrder());
 			BlazeDB.execute(selectOperator, outputFile);
 
 			assertTrue(CSV_Equals(outputFile, expFile));
@@ -67,7 +66,7 @@ public class BlazeDBTest {
 
 			Parser parser = new Parser(inputFile);
 			Operator scanOperator = new ScanOperator(parser.getFromTable().toString());
-			Operator selectOperator = new SelectOperator(scanOperator, parser);
+			Operator selectOperator = new SelectOperator(scanOperator, parser, parser.getTableOrder());
 			BlazeDB.execute(selectOperator, outputFile);
 
 			assertTrue(CSV_Equals(outputFile, expFile));
@@ -105,7 +104,7 @@ public class BlazeDBTest {
 			Parser parser = new Parser(inputFile);
 			Parser parser2 = new Parser(inputFile2);
 			Operator scanOperator = new ScanOperator(parser.getFromTable().toString());
-			Operator selectOperator = new SelectOperator(scanOperator, parser2);
+			Operator selectOperator = new SelectOperator(scanOperator, parser2, parser2.getTableOrder());
 			Operator projectOperator = new ProjectOperator(selectOperator, parser);
 			BlazeDB.execute(projectOperator, outputFile);
 
