@@ -1,13 +1,9 @@
 package ed.inf.adbs.blazedb.utility;
 
-import ed.inf.adbs.blazedb.DatabaseCatalog;
 import ed.inf.adbs.blazedb.operator.*;
-import net.sf.jsqlparser.expression.Expression;
 
 import java.io.IOException;
-import java.sql.SQLException;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Planner constructs a query execution plan from a parsed SQL query.
@@ -42,8 +38,6 @@ public class Planner {
         if (parser.getIsDistinct()) {
             rootOperator = new DistinctOperator(rootOperator);
         }
-
-
 
         return rootOperator;
     }

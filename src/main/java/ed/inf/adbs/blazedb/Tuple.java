@@ -1,5 +1,4 @@
 package ed.inf.adbs.blazedb;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import java.util.List;

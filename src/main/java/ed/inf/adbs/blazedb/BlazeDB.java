@@ -28,7 +28,6 @@ public class BlazeDB {
 		String inputFile = args[1];
 		String outputFile = args[2];
 
-		// Just for demonstration, replace this function call with your logic
 		DatabaseCatalog catalog = DatabaseCatalog.getInstance(databaseDir);
 		Parser parser = new Parser(inputFile);
 		Planner planner = new Planner(parser);
