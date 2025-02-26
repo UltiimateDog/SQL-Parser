@@ -9,7 +9,6 @@ import java.util.*;
 
 import static ed.inf.adbs.blazedb.Helper.getIndices;
 
-
 /**
  * ProjectOperator extracts only specific columns from tuples.
  */
@@ -18,11 +17,15 @@ public class ProjectOperator extends Operator {
     private final List<SelectItem<?>> selectItems;
     private final List<Integer> selectedColumnIndexes;
 
+    /**
+     * Initializes the ProjectOperator for the given child operator and parser.
+     * @param childOperator The operator producing the tuples to project.
+     * @param parser The parser containing the select items and table order.
+     */
     public ProjectOperator(Operator childOperator, Parser parser) {
         this.childOperator = childOperator;
         this.selectItems = parser.getSelectItems();
 
-        // Determine which columns we need from the full schema
         if (isSelectAll()) {
             this.selectedColumnIndexes = null;  // NULL means return full tuple
         } else {
@@ -34,6 +37,10 @@ public class ProjectOperator extends Operator {
         }
     }
 
+    /**
+     * Retrieves the next tuple from the child operator with only the selected columns.
+     * @return The projected tuple or null if there are no more tuples.
+     */
     @Override
     public Tuple getNextTuple() {
         Tuple tuple = childOperator.getNextTuple();
@@ -51,11 +58,18 @@ public class ProjectOperator extends Operator {
         }
     }
 
+    /**
+     * Resets the child operator for the next iteration.
+     */
     @Override
     public void reset() {
         childOperator.reset();
     }
 
+    /**
+     * Determines whether the SELECT clause is requesting all columns.
+     * @return True if selecting all columns, false otherwise.
+     */
     private boolean isSelectAll() {
         return selectItems.size() == 1 && Objects.equals(selectItems.get(0).toString(), "*");
     }

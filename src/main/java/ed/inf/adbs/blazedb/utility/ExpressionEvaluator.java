@@ -13,26 +13,40 @@ import java.util.List;
 import static ed.inf.adbs.blazedb.Helper.getIndices;
 
 /**
- * Evaluates WHERE clause conditions on a given Tuple.
+ * ExpressionEvaluator evaluates WHERE clause conditions on a given Tuple.
+ * It supports different types of binary expressions and arithmetic evaluations like SUM.
+ * The class handles logical conditions like AND, comparison operators (>, <, =, !=), and arithmetic operations.
  */
 public class ExpressionEvaluator {
 
-    private final List<String> tableOrder; // TableName -> Column Names
-    private final Tuple tuple; // The tuple being evaluated
+    private final List<String> tableOrder;
+    private final Tuple tuple;
     private Boolean ignoreFlag;
     private String currentTables;
     @Getter
     private List<String> tablesForExpression = new ArrayList<>();
 
+    /**
+     * Constructor for the ExpressionEvaluator class.
+     * @param tableOrder The list of table names in the query.
+     * @param tuple The tuple being evaluated for the WHERE clause.
+     */
     public ExpressionEvaluator(List<String> tableOrder, Tuple tuple) {
         this.tableOrder = tableOrder;
         this.tuple = tuple;
     }
 
+    /**
+     * Evaluates an arithmetic SUM expression on the tuple.
+     * This method assumes that the expression is a multiplication (e.g., SUM(col1 * col2)).
+     * @param expression The SUM expression as a string.
+     * @return The computed product value for the given expression.
+     */
     public int evaluateSumExpression(String expression) {
         expression = expression.replaceAll("\\s+", " ");
         List<String> columns = List.of(expression.split("\\*"));
         int product = 1;
+
         for (String column : columns) {
             if (!column.contains(".")) {
                 int value = Integer.parseInt(column.replaceAll("\\s",""));
@@ -47,8 +61,9 @@ public class ExpressionEvaluator {
     }
 
     /**
-     * Evaluates the given SQL WHERE expression on the tuple.
-     * @param expression The WHERE clause expression.
+     * Evaluates a WHERE clause expression on the tuple.
+     * This method handles logical AND expressions and various comparison operators (>, <, =, !=).
+     * @param expression The WHERE clause expression to evaluate.
      * @return True if the tuple satisfies the condition, otherwise false.
      */
     public boolean evaluate(Expression expression) {
@@ -68,15 +83,19 @@ public class ExpressionEvaluator {
         } else if (expression instanceof NotEqualsTo) {
             return evaluateComparison((BinaryExpression) expression, "!=");
         }
-        return false; // Unsupported condition
+        return false;
     }
 
     /**
-     * Evaluates a binary comparison expression.
+     * Evaluates a binary comparison expression like column1 = column2 or column1 > column2.
+     * @param expression The binary expression to evaluate (e.g., column1 = column2).
+     * @param operator The comparison operator (e.g., '=', '>', '<').
+     * @return True if the comparison holds, otherwise false.
      */
     private boolean evaluateComparison(BinaryExpression expression, String operator) {
         ignoreFlag = false;
         currentTables = "";
+
         int leftValue = extractValue(expression.getLeftExpression());
         int rightValue = extractValue(expression.getRightExpression());
 
@@ -98,7 +117,9 @@ public class ExpressionEvaluator {
     }
 
     /**
-     * Extracts the integer value from an expression.
+     * Extracts the integer value from a given expression (could be a constant or column reference).
+     * @param expression The expression to extract the value from (could be a column or literal).
+     * @return The integer value of the expression.
      */
     private int extractValue(Expression expression) {
         if (expression instanceof LongValue) {
@@ -120,5 +141,4 @@ public class ExpressionEvaluator {
         }
         throw new IllegalArgumentException("Unsupported expression: " + expression);
     }
-
 }

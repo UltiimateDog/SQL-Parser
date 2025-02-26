@@ -18,6 +18,12 @@ public class JoinOperator extends Operator {
     private final List<String> tableOrder;
     private Tuple leftTuple;
 
+    /**
+     * Initializes the JoinOperator with left and right child operators and the parser.
+     * @param leftChild The left child operator.
+     * @param rightChild The right child operator.
+     * @param parser The parser containing the join condition and table order.
+     */
     public JoinOperator(Operator leftChild,
                         Operator rightChild,
                         Parser parser) {
@@ -28,6 +34,10 @@ public class JoinOperator extends Operator {
         this.leftTuple = leftChild.getNextTuple();  // Start with first left tuple
     }
 
+    /**
+     * Retrieves the next tuple resulting from the join between the left and right tables.
+     * @return The joined tuple, or null if no more tuples are available.
+     */
     @Override
     public Tuple getNextTuple() {
         Tuple rightTuple;
@@ -51,6 +61,9 @@ public class JoinOperator extends Operator {
         return null;  // No more tuples to join
     }
 
+    /**
+     * Resets both the left and right child operators for the next iteration.
+     */
     @Override
     public void reset() {
         leftChild.reset();

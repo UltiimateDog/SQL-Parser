@@ -1,14 +1,27 @@
 package ed.inf.adbs.blazedb;
-import net.sf.jsqlparser.expression.Expression;
 
+import net.sf.jsqlparser.expression.Expression;
 import java.io.*;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+/**
+ * Helper class providing utility methods for CSV parsing, schema indexing, and expression extraction.
+ * Includes methods for parsing CSV files, comparing CSV contents, retrieving column indices,
+ * identifying compared tables, and extracting expressions from SQL queries.
+ */
 public class Helper {
-    public static List<List<Integer>> CSV_Parser(String filePath) throws IOException {
+
+    /**
+     * Parses a CSV file into a list of integer lists.
+     *
+     * @param filePath The path to the CSV file.
+     * @return A list of lists containing integer values parsed from the CSV file.
+     * @throws IOException If there is an error reading the file.
+     */
+    public static List<List<Integer>> parseCSV(String filePath) throws IOException {
         List<List<Integer>> data = new ArrayList<>();
         try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
             String line;
@@ -22,9 +35,17 @@ public class Helper {
         return data;
     }
 
-    public static boolean CSV_Equals(String filePath1, String filePath2) throws IOException {
-        List<List<Integer>> data1 = CSV_Parser(filePath1);
-        List<List<Integer>> data2 = CSV_Parser(filePath2);
+    /**
+     * Compares two CSV files to check if they are equal in terms of data content.
+     *
+     * @param filePath1 The path to the first CSV file.
+     * @param filePath2 The path to the second CSV file.
+     * @return True if both CSV files contain identical data; false otherwise.
+     * @throws IOException If there is an error reading the files.
+     */
+    public static boolean csvEquals(String filePath1, String filePath2) throws IOException {
+        List<List<Integer>> data1 = parseCSV(filePath1);
+        List<List<Integer>> data2 = parseCSV(filePath2);
 
         if (data1.size() != data2.size()) {
             return false;
@@ -39,22 +60,42 @@ public class Helper {
         return true;
     }
 
+    /**
+     * Retrieves the column indices based on an SQL expression.
+     *
+     * @param expression   The SQL expression.
+     * @param tableOrder   The list of tables in join order.
+     * @return A list of column indices corresponding to the expression.
+     */
     public static List<Integer> getIndices(Expression expression, List<String> tableOrder) {
-        List<Integer> indices = new ArrayList<>();
-        String expressionStr = expression.toString();
-
-        // Extract table and column name from the expression
-        return getIndicesList(expressionStr, tableOrder, indices);
+        return getIndices(expression.toString(), tableOrder);
     }
 
+    /**
+     * Retrieves the column indices based on an SQL expression in string format.
+     *
+     * @param expression   The string representation of an SQL expression.
+     * @param tableOrder   The list of tables in join order.
+     * @return A list of column indices corresponding to the expression.
+     * @throws IllegalArgumentException If the expression format is invalid or table/column is not found.
+     */
     public static List<Integer> getIndices(String expression, List<String> tableOrder) {
         List<Integer> indices = new ArrayList<>();
-
-        // Extract table and column name from the expression
-        return getIndicesList(expression, tableOrder, indices);
+        return resolveIndices(expression, tableOrder, indices);
     }
 
-    private static List<Integer> getIndicesList(String expression, List<String> tableOrder, List<Integer> indices) {
+    /**
+     * Resolves column indices based on a given expression and table order.
+     *
+     * @param expression   The column expression (e.g., "table.column").
+     * @param tableOrder   The list of tables in join order.
+     * @param indices      The list of resolved indices.
+     * @return A list of column indices corresponding to the expression.
+     * @throws IllegalArgumentException If the column or table is not found.
+     */
+    private static List<Integer> resolveIndices(String expression,
+                                                List<String> tableOrder,
+                                                List<Integer> indices) {
         String[] parts = expression.split("\\.");
         if (parts.length != 2) {
             throw new IllegalArgumentException("Invalid column expression: " + expression);
@@ -75,7 +116,6 @@ public class Helper {
 
         List<String> schema = tableSchemas.get(tableName);
 
-        // Calculate offset once
         int offset = 0;
         for (int i = 0; i < tableOrder.indexOf(tableName); i++) {
             offset += tableSchemas.get(tableOrder.get(i)).size();
@@ -96,34 +136,15 @@ public class Helper {
         return indices;
     }
 
-    public static List<String> getComparedTables(Tuple tuple, List<String> tableOrder) {
-        List<String> comparedTables = new ArrayList<>();
-        Map<String, List<String>> tableSchemas = DatabaseCatalog.getInstance().getTableSchemas(tableOrder);
-        int tupleSize = tuple.getValues().size();
-        int accumulatedSize = 0;
-
-        for (String table : tableOrder) {
-            int tableSize = tableSchemas.get(table).size();
-            accumulatedSize += tableSize;
-
-            if (tupleSize <= accumulatedSize) {
-                comparedTables.add(table);
-                break;
-            }
-            comparedTables.add(table);
-        }
-
-        return comparedTables;
-    }
-
+    /**
+     * Extracts the expression inside a SUM() function from an SQL query.
+     *
+     * @param input The SQL expression containing SUM().
+     * @return The extracted expression inside SUM(), or null if not found.
+     */
     public static String extractSumExpression(String input) {
-        // Define regex pattern to match SUM(expression)
         Pattern pattern = Pattern.compile("SUM\\((.*?)\\)");
         Matcher matcher = pattern.matcher(input);
-
-        // If a match is found, return the extracted expression
         return matcher.find() ? matcher.group(1) : null;
     }
-
 }
-

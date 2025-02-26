@@ -1,6 +1,6 @@
 package ed.inf.adbs.blazedb;
 
-import static ed.inf.adbs.blazedb.Helper.CSV_Equals;
+import static ed.inf.adbs.blazedb.Helper.csvEquals;
 import static org.junit.Assert.assertTrue;
 
 import ed.inf.adbs.blazedb.operator.*;
@@ -35,7 +35,7 @@ public class BlazeDBTest {
 			Operator scanOperator = new ScanOperator(tables[i]);
 
 			BlazeDB.execute(scanOperator, outputFile);
-			assertTrue(CSV_Equals(outputFile, expFile));
+			assertTrue(csvEquals(outputFile, expFile));
 		}
 	}
 
@@ -52,7 +52,7 @@ public class BlazeDBTest {
 			Operator selectOperator = new SelectOperator(scanOperator, parser, parser.getTableOrder());
 			BlazeDB.execute(selectOperator, outputFile);
 
-			assertTrue(CSV_Equals(outputFile, expFile));
+			assertTrue(csvEquals(outputFile, expFile));
 		}
 	}
 
@@ -69,7 +69,7 @@ public class BlazeDBTest {
 			Operator selectOperator = new SelectOperator(scanOperator, parser, parser.getTableOrder());
 			BlazeDB.execute(selectOperator, outputFile);
 
-			assertTrue(CSV_Equals(outputFile, expFile));
+			assertTrue(csvEquals(outputFile, expFile));
 		}
 	}
 
@@ -86,7 +86,7 @@ public class BlazeDBTest {
 			Operator projectOperator = new ProjectOperator(scanOperator, parser);
 			BlazeDB.execute(projectOperator, outputFile);
 
-			assertTrue(CSV_Equals(outputFile, expFile));
+			assertTrue(csvEquals(outputFile, expFile));
 		}
 	}
 
@@ -108,7 +108,7 @@ public class BlazeDBTest {
 			Operator projectOperator = new ProjectOperator(selectOperator, parser);
 			BlazeDB.execute(projectOperator, outputFile);
 
-			assertTrue(CSV_Equals(outputFile, expFile));
+			assertTrue(csvEquals(outputFile, expFile));
 		}
 	}
 
@@ -126,7 +126,7 @@ public class BlazeDBTest {
 			Operator joinOperator = new JoinOperator(scanOperator, scanOperator2, parser);
 			BlazeDB.execute(joinOperator, outputFile);
 
-			assertTrue(CSV_Equals(outputFile, expFile));
+			assertTrue(csvEquals(outputFile, expFile));
 		}
 	}
 
@@ -144,7 +144,7 @@ public class BlazeDBTest {
 			Operator joinOperator = new JoinOperator(scanOperator, scanOperator2, parser);
 			BlazeDB.execute(joinOperator, outputFile);
 
-			assertTrue(CSV_Equals(outputFile, expFile));
+			assertTrue(csvEquals(outputFile, expFile));
 		}
 	}
 
@@ -163,7 +163,7 @@ public class BlazeDBTest {
 			Operator projectOperator = new ProjectOperator(joinOperator, parser);
 			BlazeDB.execute(projectOperator, outputFile);
 
-			assertTrue(CSV_Equals(outputFile, expFile));
+			assertTrue(csvEquals(outputFile, expFile));
 		}
 	}
 
@@ -207,7 +207,7 @@ public class BlazeDBTest {
 			Operator projectOperator = new ProjectOperator(joinOperator2, parser);
 			BlazeDB.execute(projectOperator, outputFile);
 
-			assertTrue(CSV_Equals(outputFile, expFile));
+			assertTrue(csvEquals(outputFile, expFile));
 		}
 	}
 
@@ -224,7 +224,7 @@ public class BlazeDBTest {
 			Operator sortOperator = new SortOperator(scanOperator, parser);
 			BlazeDB.execute(sortOperator, outputFile);
 
-			assertTrue(CSV_Equals(outputFile, expFile));
+			assertTrue(csvEquals(outputFile, expFile));
 		}
 	}
 
@@ -244,7 +244,7 @@ public class BlazeDBTest {
 			Operator projectOperator = new ProjectOperator(sortOperator, parser);
 			BlazeDB.execute(projectOperator, outputFile);
 
-			assertTrue(CSV_Equals(outputFile, expFile));
+			assertTrue(csvEquals(outputFile, expFile));
 		}
 	}
 
@@ -265,7 +265,7 @@ public class BlazeDBTest {
 			Operator distinctOperator = new DistinctOperator(projectOperator);
 			BlazeDB.execute(distinctOperator, outputFile);
 
-			assertTrue(CSV_Equals(outputFile, expFile));
+			assertTrue(csvEquals(outputFile, expFile));
 		}
 	}
 
@@ -282,7 +282,7 @@ public class BlazeDBTest {
 			Operator sumOperator = new SumOperator(scanOperator, parser);
 			BlazeDB.execute(sumOperator, outputFile);
 
-			assertTrue(CSV_Equals(outputFile, expFile));
+			assertTrue(csvEquals(outputFile, expFile));
 		}
 	}
 
@@ -302,7 +302,7 @@ public class BlazeDBTest {
 			Operator sumOperator = new SumOperator(sortOperator, parser);
 			BlazeDB.execute(sumOperator, outputFile);
 
-			assertTrue(CSV_Equals(outputFile, expFile));
+			assertTrue(csvEquals(outputFile, expFile));
 		}
 	}
 
@@ -321,7 +321,7 @@ public class BlazeDBTest {
 			Operator sumOperator = new SumOperator(joinOperator, parser);
 			BlazeDB.execute(sumOperator, outputFile);
 
-			assertTrue(CSV_Equals(outputFile, expFile));
+			assertTrue(csvEquals(outputFile, expFile));
 		}
 	}
 

@@ -11,16 +11,22 @@ import static ed.inf.adbs.blazedb.Helper.getIndices;
 
 /**
  * SumOperator handles GROUP BY and SUM aggregation for multiple sum columns.
+ * It processes tuples, groups them by specified columns, and computes the SUM for each group.
  */
 public class SumOperator extends Operator {
     private final Operator childOperator;
     private final List<String> groupByColumns;
     private final List<String> sumColumns;
     private final List<String> selectColumns;
-    private final Map<List<String>, List<Integer>> groupSumMap; // Group key → List of SUM results
+    private final Map<List<String>, List<Integer>> groupSumMap;
     private Iterator<Map.Entry<List<String>, List<Integer>>> iterator;
-    private final List<String> tableOrder; // Stores the table processing order
+    private final List<String> tableOrder;
 
+    /**
+     * Initializes SumOperator with the child operator and parser information.
+     * @param childOperator The child operator to retrieve tuples from.
+     * @param parser The parser to extract GROUP BY, SUM, and SELECT columns.
+     */
     public SumOperator(Operator childOperator, Parser parser) {
         this.childOperator = childOperator;
         this.groupByColumns = parser.getGroupByColumns();
@@ -28,12 +34,12 @@ public class SumOperator extends Operator {
         this.sumColumns = parser.getSumColumns();
         this.selectColumns = parser.getSelectColumns();
         this.groupSumMap = new LinkedHashMap<>();
-        aggregateTuples(); // Process and compute SUM
+        aggregateTuples();
         this.iterator = groupSumMap.entrySet().iterator();
     }
 
     /**
-     * Reads all tuples, groups them, and computes SUM for multiple columns.
+     * Groups the tuples and computes SUM for the specified columns.
      */
     private void aggregateTuples() {
         Tuple tuple;
@@ -41,13 +47,11 @@ public class SumOperator extends Operator {
             List<String> groupKey = extractGroupKey(tuple);
             ExpressionEvaluator evaluator = new ExpressionEvaluator(tableOrder, tuple);
 
-            // Compute sum values for all sum columns
             List<Integer> sumValues = new ArrayList<>();
             for (String sumColumn : sumColumns) {
                 sumValues.add(evaluator.evaluateSumExpression(extractSumExpression(sumColumn)));
             }
 
-            // Update the group sum map
             groupSumMap.merge(groupKey, sumValues, (existingSums, newSums) -> {
                 for (int i = 0; i < existingSums.size(); i++) {
                     existingSums.set(i, existingSums.get(i) + newSums.get(i));
@@ -57,6 +61,10 @@ public class SumOperator extends Operator {
         }
     }
 
+    /**
+     * Returns the next tuple from the grouped results.
+     * @return The next tuple with group values and computed SUM values.
+     */
     @Override
     public Tuple getNextTuple() {
         if (!iterator.hasNext()) return null;
@@ -71,22 +79,25 @@ public class SumOperator extends Operator {
             }
         }
 
-        if (sumColumns.isEmpty()) {
-            return new Tuple(resultValues.toArray(new String[0]));
+        if (!sumColumns.isEmpty()) {
+            entry.getValue().forEach(sum -> resultValues.add(String.valueOf(sum)));
         }
-
-        entry.getValue().forEach(sum -> resultValues.add(String.valueOf(sum))); // Add SUM results
 
         return new Tuple(resultValues.toArray(new String[0]));
     }
 
+    /**
+     * Resets the iterator to start from the beginning of the grouped results.
+     */
     @Override
     public void reset() {
         iterator = groupSumMap.entrySet().iterator();
     }
 
     /**
-     * Extracts the GROUP BY column values as a key.
+     * Extracts the group key from a tuple based on the GROUP BY columns.
+     * @param tuple The tuple from which the group key is extracted.
+     * @return A list of values corresponding to the GROUP BY columns.
      */
     private List<String> extractGroupKey(Tuple tuple) {
         List<String> key = new ArrayList<>();

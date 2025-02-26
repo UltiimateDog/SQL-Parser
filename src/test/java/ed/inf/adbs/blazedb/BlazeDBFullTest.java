@@ -1,6 +1,6 @@
 package ed.inf.adbs.blazedb;
 
-import static ed.inf.adbs.blazedb.Helper.CSV_Equals;
+import static ed.inf.adbs.blazedb.Helper.csvEquals;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
@@ -40,7 +40,7 @@ public class BlazeDBFullTest {
 
             BlazeDB.main(new String[]{DB_DIR, inputFile, outputFile});
 
-            assertTrue("Mismatch in output for: " + queryName, CSV_Equals(outputFile, expFile));
+            assertTrue("Mismatch in output for: " + queryName, csvEquals(outputFile, expFile));
         }
     }
 
@@ -63,7 +63,7 @@ public class BlazeDBFullTest {
 
             BlazeDB.main(new String[]{DB_DIR, inputFile, outputFile});
 
-            assertTrue("Mismatch in output for: " + queryName, CSV_Equals(outputFile, expFile));
+            assertTrue("Mismatch in output for: " + queryName, csvEquals(outputFile, expFile));
         }
     }
 }

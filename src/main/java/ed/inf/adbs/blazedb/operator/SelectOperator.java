@@ -15,12 +15,22 @@ public class SelectOperator extends Operator {
     private final Expression whereClause;
     private final List<String> tableOrder;
 
+    /**
+     * Initializes the SelectOperator with child operator, parser, and table order.
+     * @param childOperator The child operator to retrieve tuples from.
+     * @param parser The parser containing WHERE clause.
+     * @param tableOrder The order of the tables.
+     */
     public SelectOperator(Operator childOperator, Parser parser, List<String> tableOrder) {
         this.childOperator = childOperator;
         this.whereClause = parser.getWhereClause();
         this.tableOrder = tableOrder;
     }
 
+    /**
+     * Retrieves the next tuple that satisfies the WHERE clause condition.
+     * @return The next tuple that satisfies the WHERE condition or null if no more tuples.
+     */
     @Override
     public Tuple getNextTuple() {
         Tuple tuple;
@@ -33,6 +43,9 @@ public class SelectOperator extends Operator {
         return null;
     }
 
+    /**
+     * Resets the child operator to the beginning.
+     */
     @Override
     public void reset() {
         childOperator.reset();

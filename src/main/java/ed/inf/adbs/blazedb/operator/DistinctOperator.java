@@ -13,6 +13,10 @@ public class DistinctOperator extends Operator {
     private final Set<String> seenTuples;
     private Tuple nextTuple;
 
+    /**
+     * Initializes the DistinctOperator with the child operator.
+     * @param childOperator The child operator that generates tuples.
+     */
     public DistinctOperator(Operator childOperator) {
         this.childOperator = childOperator;
         this.seenTuples = new HashSet<>();
@@ -20,7 +24,8 @@ public class DistinctOperator extends Operator {
     }
 
     /**
-     * Fetches the next unique tuple.
+     * Fetches the next unique tuple from the child operator.
+     * @return The next unique tuple, or null if no more unique tuples exist.
      */
     private Tuple fetchNextUniqueTuple() {
         Tuple tuple;
@@ -33,6 +38,10 @@ public class DistinctOperator extends Operator {
         return null; // No more unique tuples
     }
 
+    /**
+     * Returns the next unique tuple.
+     * @return The next unique tuple.
+     */
     @Override
     public Tuple getNextTuple() {
         Tuple current = nextTuple;
@@ -40,6 +49,9 @@ public class DistinctOperator extends Operator {
         return current;
     }
 
+    /**
+     * Resets the operator to start from the beginning.
+     */
     @Override
     public void reset() {
         childOperator.reset();
